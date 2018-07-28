@@ -1,0 +1,4 @@
+Debug/
+Release/
+*.cfg
+NUCLEO-L011K4.xml
