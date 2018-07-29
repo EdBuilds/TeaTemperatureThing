@@ -37,5 +37,8 @@ OutputPin::OutputPin(uint16_t pin,GPIO_TypeDef * port){
 		HAL_GPIO_WritePin(Port,Pin,GPIO_PIN_RESET);
 	}
 
+	void OutputPin::set(const GPIO_PinState & StateValue){
+		HAL_GPIO_WritePin(Port,Pin,StateValue);
+	}
 
 

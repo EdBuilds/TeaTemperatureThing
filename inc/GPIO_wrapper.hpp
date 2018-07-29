@@ -23,6 +23,7 @@ public:
 	OutputPin(uint16_t pin,GPIO_TypeDef * port);
 	void set();
 	void reset();
+	void set(const GPIO_PinState & StateValue);
 };
 
 

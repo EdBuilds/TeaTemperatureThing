@@ -16,7 +16,7 @@
 
 int main(void)
 {
-	OutputPin pin1(GPIO_PIN_9,GPIOA);
-	pin1.reset();
+	//OutputPin pin1(GPIO_PIN_9,GPIOA);
+	//pin1.reset();
 	for(;;);
 }
