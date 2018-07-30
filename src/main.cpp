@@ -16,6 +16,8 @@
 
 int main(void)
 {
+	Display display;
+	display.All();
 	//OutputPin pin1(GPIO_PIN_9,GPIOA);
 	//pin1.reset();
 	for(;;);
