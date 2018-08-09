@@ -5,6 +5,7 @@
  *      Author: tamas
  */
 #include "display_driver.hpp"
+#define ASCII_OFFSET 32
 void Display::segmentBlock::set(const uint8_t & segment){
 	//when the pin is set low, the LED turns on, because of the lame common anode 7 segment display
 PinSetting[segment]=GPIO_PIN_RESET;
@@ -13,6 +14,11 @@ void Display::segmentBlock::reset(const uint8_t & segment){
 	//when the pin is set high, the LED turns off, because of the lame common anode 7 segment display
 PinSetting[segment]=GPIO_PIN_SET;
 
+}
+
+
+void Display::segmentBlock::set(const uint8_t & segment,GPIO_PinState state){
+	Pins[segment].set(state);
 }
 void Display::segmentBlock::setAll(){
 for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
@@ -31,7 +37,12 @@ void Display::segmentBlock::update(){
 		Pins[i].set(PinSetting[i]);
 	}
 }
-void Display::Print(char* stringToPrint){}
+void Display::Print(char* stringToPrint){
+	for(int i=0; i<CONNECTED_BLOCKS; i++){
+		Blocks[i].setAsbinary(SevenSegmentASCII[uint8_t(stringToPrint[i])-ASCII_OFFSET]);
+		Blocks[i].update();
+	}
+}
 void Display::Clear(){
 for(int i=0; i<CONNECTED_BLOCKS; i++){
 	Blocks[i].resetAll();
@@ -64,27 +75,29 @@ Display::segmentBlock::segmentBlock(){}
 	}
 Display::Display(){
 	uint16_t block1pins[8]={GPIO_PIN_10,\
-	GPIO_PIN_10,\
-	GPIO_PIN_10,\
-	GPIO_PIN_10,\
-	GPIO_PIN_10,\
-	GPIO_PIN_10,\
-	GPIO_PIN_10,\
-	GPIO_PIN_10};
+	GPIO_PIN_9,\
+	GPIO_PIN_12,\
+	GPIO_PIN_0,\
+	GPIO_PIN_7,\
+	GPIO_PIN_6,\
+	GPIO_PIN_1,\
+	GPIO_PIN_8};
 	GPIO_TypeDef * block1ports[8]={GPIOA,\
 	GPIOA,\
 	GPIOA,\
-	GPIOA,\
-	GPIOA,\
-	GPIOA,\
-	GPIOA,\
+	GPIOB,\
+	GPIOB,\
+	GPIOB,\
+	GPIOB,\
 	GPIOA};
 	Blocks[0]=segmentBlock(block1pins,block1ports);
 }
+
+
 //Defining ASCII to 7 segments here, not to clutter the .h
 //all credits to dmadison.
 //nothing interesting after this point move along citizen.
-const uint8_t Display::segmentBlock::SevenSegmentASCII[96] = {
+const uint8_t Display::SevenSegmentASCII[96] = {
 	0b00000000, /* (space) */
 	0b10000110, /* ! */
 	0b00100010, /* " */

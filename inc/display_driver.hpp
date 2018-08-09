@@ -12,12 +12,13 @@
 #define SEGMENT_NUMBER_IN_BLOCK 8	//I made a define for this, just to make a define
 #define CONNECTED_BLOCKS 1 			//these defines are really not necessary, what am I doing?
 class Display{
+		static const uint8_t SevenSegmentASCII[96];
 	struct segmentBlock{
 	public:
-		static const uint8_t SevenSegmentASCII[96];
 		OutputPin Pins[SEGMENT_NUMBER_IN_BLOCK];
 		GPIO_PinState PinSetting[SEGMENT_NUMBER_IN_BLOCK];
 		void set(const uint8_t & segment);
+		void set(const uint8_t & segment,GPIO_PinState state);
 		void reset(const uint8_t & segment);
 		void setAll();
 		void setAsbinary(const uint8_t & binaryList);
