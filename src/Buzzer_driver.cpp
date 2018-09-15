@@ -32,7 +32,7 @@ void Buzzer::init_timer(){
 	  GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
 	  HAL_GPIO_Init(BUZZER_GPIO_PORT, &GPIO_InitStruct);
 
-	  TIM_HandleTypeDef htim2=TIM_HandleTypeDef();	//I have to call the constructor here explicitly, otherwise it doesn't work #weird
+	  htim2=TIM_HandleTypeDef();	//I have to call the constructor here explicitly, otherwise it doesn't work #weird
 	  htim2.Instance = BUZZER_TIMER;
 	  htim2.Init.Prescaler = 16-1;
 	  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;

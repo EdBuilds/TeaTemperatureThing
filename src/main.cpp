@@ -17,11 +17,10 @@ void SystemClock_Config(void);
 void _Error_Handler(char *file, int line);
 int main(void)
 {
-
 SystemClock_Config();
 Buzzer buzzer;
 buzzer.init_timer();
-buzzer.setFrequency(2000);
+buzzer.setFrequency(16000);
 buzzer.start();
 	for(;;);
 }
@@ -56,10 +55,10 @@ buzzer.start();
    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-//   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-//   {
+   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+   {
 //     _Error_Handler(__FILE__, __LINE__);
-//   }
+   }
 
      /**Configure the Systick interrupt time
      */
