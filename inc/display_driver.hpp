@@ -9,8 +9,7 @@
 #define DISPLAY_DRIVER_HPP_
 #include "stm32l0xx_hal.h"
 #include "GPIO_wrapper.hpp"
-#define SEGMENT_NUMBER_IN_BLOCK 8	//I made a define for this, just to make a define
-#define CONNECTED_BLOCKS 1 			//these defines are really not necessary, what am I doing?
+#include "pinout_definitions.hpp"
 class Display{
 		static const uint8_t SevenSegmentASCII[96];
 	struct segmentBlock{

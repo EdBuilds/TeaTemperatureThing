@@ -74,23 +74,23 @@ Display::segmentBlock::segmentBlock(){}
 		}
 	}
 Display::Display(){
-	uint16_t block1pins[8]={GPIO_PIN_10,\
-	GPIO_PIN_9,\
-	GPIO_PIN_12,\
-	GPIO_PIN_0,\
-	GPIO_PIN_7,\
-	GPIO_PIN_6,\
-	GPIO_PIN_1,\
-	GPIO_PIN_8};
-	GPIO_TypeDef * block1ports[8]={GPIOA,\
-	GPIOA,\
-	GPIOA,\
-	GPIOB,\
-	GPIOB,\
-	GPIOB,\
-	GPIOB,\
-	GPIOA};
-	Blocks[0]=segmentBlock(block1pins,block1ports);
+uint16_t Block1Pins[]={BLOCK_1_PIN_A,
+		BLOCK_1_PIN_B,
+		BLOCK_1_PIN_C,
+		BLOCK_1_PIN_D,
+		BLOCK_1_PIN_E,
+		BLOCK_1_PIN_F,
+		BLOCK_1_PIN_G,
+		BLOCK_1_PIN_SP};
+GPIO_TypeDef* Block1Ports[]={BLOCK_1_PORT_A,
+		BLOCK_1_PORT_B,
+		 BLOCK_1_PORT_C,
+		 BLOCK_1_PORT_D,
+		 BLOCK_1_PORT_E,
+		 BLOCK_1_PORT_F,
+		 BLOCK_1_PORT_G,
+		 BLOCK_1_PORT_SP};
+	Blocks[0]=segmentBlock(Block1Pins,Block1Ports);
 }
 
 

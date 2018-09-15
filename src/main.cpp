@@ -19,24 +19,13 @@ int main(void)
 {
 
 SystemClock_Config();
-//MX_ADC_Init();
-//uint32_t ADCValue;
-//__HAL_RCC_GPIOA_CLK_ENABLE();
-//GPIO_InitTypeDef GPIO_InitStruct;
-//GPIO_InitStruct.Pin = BUZZER_GPIO_PIN;
-//GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-//GPIO_InitStruct.Pull = GPIO_NOPULL;
-//GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-////GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
-//HAL_GPIO_Init(BUZZER_GPIO_PORT, &GPIO_InitStruct);
-//HAL_GPIO_WritePin(BUZZER_GPIO_PORT,BUZZER_GPIO_PIN, GPIO_PIN_SET);
 Buzzer buzzer;
 buzzer.init_timer();
 buzzer.setFrequency(2000);
 buzzer.start();
 	for(;;);
 }
-
+//Cleanup this code dude
  void SystemClock_Config(void)
  {
 
