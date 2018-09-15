@@ -13,16 +13,23 @@
 #include "stm32l0xx_nucleo_32.h"
 #include "display_driver.hpp"
 #include "Buzzer_driver.hpp"
+#include "Thermometer_driver.hpp"
 void SystemClock_Config(void);
 void _Error_Handler(char *file, int line);
 int main(void)
 {
+HAL_Init();
 SystemClock_Config();
 Buzzer buzzer;
 buzzer.init_timer();
 buzzer.setFrequency(16000);
 buzzer.start();
-	for(;;);
+Thermometer thermometer;
+uint16_t result;
+	for(;;){
+	result=thermometer.measure();
+	buzzer.setFrequency(result);
+	}
 }
 //Cleanup this code dude
  void SystemClock_Config(void)
