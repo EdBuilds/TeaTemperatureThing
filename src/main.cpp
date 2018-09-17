@@ -15,7 +15,6 @@
 #include "Buzzer_driver.hpp"
 #include "Persistent_storage.hpp"
 void SystemClock_Config(void);
-void _Error_Handler(char *file, int line);
 int main(void)
 {
 SystemClock_Config();
@@ -24,7 +23,6 @@ buzzer.init_timer();
 buzzer.setFrequency(16000);
 buzzer.start();
 PersistentStorage storage;
-calibrationData out;
 storage.CalibrationData.Header=0x22;
 storage.CalibrationData.Offset=1000;
 storage.CalibrationData.multiplier=34;
