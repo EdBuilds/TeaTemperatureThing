@@ -6,13 +6,13 @@
  */
 
 #include <Thermometer_driver.hpp>
-#include "pinout_definitions.hpp"
+
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx.h"
 #include "stm32l0xx_hal_tim.h"
 #include "stm32l0xx_hal_gpio.h"
 #include "stm32l0xx_nucleo_32.h"
-Thermometer::Thermometer(){
+Thermometer::Thermometer(): ReferenceEnable(THERMOMETER_REFERENCE_PIN,THERMOMETER_REFERENCE_PORT){
 	GPIO_InitTypeDef gpioInit;
 
 	    __GPIOC_CLK_ENABLE();
@@ -50,14 +50,20 @@ Thermometer::Thermometer(){
 	    {
 	        asm("bkpt 255");
 	    }
+	    //Initialize reference pin
+	   ReferenceEnable.reset();
 	}
 uint16_t Thermometer::measure(){
+	uint16_t returnValue=0;
+    ReferenceEnable.set();
+    //It takes around 4 us for the voltage to stabilize, It would be a good idea to put a 5 us delay here.
 	HAL_ADC_Start(&AdcHandle);
 	if (HAL_ADC_PollForConversion(&AdcHandle, 1000000) == HAL_OK)
 	{
-	     return HAL_ADC_GetValue(&AdcHandle);
+	     returnValue=HAL_ADC_GetValue(&AdcHandle);
 	}
-return 0;
+    ReferenceEnable.reset();
+return returnValue;
 }
 
 

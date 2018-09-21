@@ -24,10 +24,11 @@ Buzzer buzzer;
 buzzer.init_timer();
 buzzer.setFrequency(16000);
 buzzer.start();
-Thermometer thermometer;
+//Thermometer thermometer;
 uint16_t result;
 	for(;;){
-	result=thermometer.measure();
+//	result=(thermometer.measure());
+	HAL_Delay(10);
 	buzzer.setFrequency(result);
 	}
 }
