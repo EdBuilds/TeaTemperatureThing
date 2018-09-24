@@ -13,6 +13,7 @@
 #include "stm32l0xx_nucleo_32.h"
 #include "display_driver.hpp"
 #include "Buzzer_driver.hpp"
+#include "Alarm.hpp"
 void SystemClock_Config(void);
 void SystemPower_Config(void);
 void _Error_Handler(char *file, int line);
