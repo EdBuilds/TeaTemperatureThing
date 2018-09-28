@@ -23,15 +23,25 @@ int main(void)
 {
 	HAL_Init();
 SystemClock_Config();
+SystemPower_Config();
+//Buzzer buzzer;
+//buzzer.init_timer();
+//buzzer.setFrequency(16000);
+//buzzer.start();
+//__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+
 alarm.Init();
+alarm.SetNext(0,10,false);
+ /* Disable GPIOs clock */
+// __HAL_RCC_GPIOA_CLK_DISABLE();
+// __HAL_RCC_GPIOB_CLK_DISABLE();
+ /* Enter Stop Mode */
+HAL_SuspendTick();
+HAL_RCC_DeInit();
+ HAL_DeInit();
+HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+//HAL_PWR_EnterSTANDBYMode();
 	for(;;){
-		RTC_TimeTypeDef temp;
-		HAL_RTC_GetTime(&alarm.hrtc,&temp,RTC_FORMAT_BCD);
-		temp.Seconds++;
-//		if(HAL_RTC_PollForAlarmAEvent(&alarm.hrtc,1000000)==HAL_OK){
-//			int i=0;
-//			i++;
-//		}
 	}
 }
 //Cleanup this code dude
@@ -100,21 +110,3 @@ void SystemClock_Config(void)
    HAL_PWREx_EnableUltraLowPower();
    HAL_PWREx_EnableLowPowerRunMode();
  }
-
-
-void EXTI0_1_IRQHandler(void){
-
-}
-void EXTI2_3_IRQHandler(void){
-
-}
-void EXTI4_15_IRQHandler(void){
-
-}
-void WWDG_IRQHandler(void){
-
-}
-
-
-
-
