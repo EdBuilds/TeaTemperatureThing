@@ -40,3 +40,13 @@ void SysTick_Handler(void)
 	osSystickHandler();
 #endif
 }
+void RTC_IRQHandler(void)
+{
+  /* USER CODE BEGIN RTC_IRQn 0 */
+	 RTC_HandleTypeDef hrtc;
+  /* USER CODE END RTC_IRQn 0 */
+  HAL_RTC_AlarmIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_IRQn 1 */
+
+  /* USER CODE END RTC_IRQn 1 */
+}
