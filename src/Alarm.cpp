@@ -59,10 +59,7 @@ void Alarm::SetNext(uint8_t minutes, uint8_t seconds, bool reoccuring){
 	ReuccuringAlarm=reoccuring;
 InitializeAlarm(0,AlarmMinutes,AlarmSeconds,RTC_ALARM_A);
 }
-void RTC_IRQHandler(void)
-{
-  HAL_RTC_AlarmIRQHandler(&Alarm::hrtc);
-}
+
 
 void Alarm::InitializeAlarm(uint8_t hours, uint8_t minutes, uint8_t seconds, uint32_t alarm){
 	RTC_TimeTypeDef CurrentTime;
@@ -87,11 +84,11 @@ void Alarm::InitializeAlarm(uint8_t hours, uint8_t minutes, uint8_t seconds, uin
 	sAlarm.AlarmTime.SubSeconds = 0x0;
 	sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
 	sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_SET;
-	sAlarm.AlarmMask =RTC_ALARMMASK_DATEWEEKDAY;
+	sAlarm.AlarmMask =RTC_ALARMMASK_ALL;
 	sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
 	sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
 	sAlarm.AlarmDateWeekDay = 0x1;
-	sAlarm.Alarm = alarm;
+	sAlarm.Alarm = RTC_ALARM_A;
 
 	if (HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BCD) != HAL_OK)
 	{
@@ -99,6 +96,11 @@ void Alarm::InitializeAlarm(uint8_t hours, uint8_t minutes, uint8_t seconds, uin
 	}
 }
 
+
+void RTC_IRQHandler(void)
+{
+  HAL_RTC_AlarmIRQHandler(&Alarm::hrtc);
+}
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
 int i=0;
 i++;

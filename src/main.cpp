@@ -36,10 +36,10 @@ alarm.SetNext(0,10,false);
 // __HAL_RCC_GPIOA_CLK_DISABLE();
 // __HAL_RCC_GPIOB_CLK_DISABLE();
  /* Enter Stop Mode */
-HAL_SuspendTick();
-HAL_RCC_DeInit();
- HAL_DeInit();
-HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+//HAL_SuspendTick();
+//HAL_RCC_DeInit();
+// HAL_DeInit();
+//HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 //HAL_PWR_EnterSTANDBYMode();
 	for(;;){
 	}
