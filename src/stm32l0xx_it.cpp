@@ -15,7 +15,7 @@
 #include <cmsis_os.h>
 #endif
 #include "stm32l0xx_it.h"
-
+#include <RealTimeClock.hpp>
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -40,3 +40,4 @@ void SysTick_Handler(void)
 	osSystickHandler();
 #endif
 }
+
