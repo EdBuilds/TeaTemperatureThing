@@ -5,12 +5,26 @@
  *      Author: tamas
  */
 
-#include "Alarm.hpp"
+#include <RealTimeClock.hpp>
 #include "stm32l0xx.h"
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx_hal_rtc.h"
-RTC_HandleTypeDef Alarm::hrtc=RTC_HandleTypeDef();
-void Alarm::Init(){
+RTC_HandleTypeDef RealTimeClock::hrtc=RTC_HandleTypeDef();
+Alarm RealTimeClock::AlarmA;
+Alarm RealTimeClock::AlarmB;
+void RealTimeClock::Init(){
+	RTC_AlarmTypeDef sAlarm;
+	  sAlarm.AlarmTime.SubSeconds = 0x0;
+	  sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+	  sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_SET;
+	  sAlarm.AlarmMask =RTC_ALARMMASK_HOURS |RTC_ALARMMASK_DATEWEEKDAY;
+	  sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
+	  sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
+	  sAlarm.AlarmDateWeekDay = 0x1;
+	  sAlarm.Alarm = RTC_ALARM_B;
+	  AlarmB=Alarm(sAlarm,{});
+	  sAlarm.Alarm = RTC_ALARM_A;
+	  AlarmA=Alarm(sAlarm,{});
 	HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_A);
 	HAL_RTC_DeInit(&hrtc);
 	  __HAL_RCC_RTC_ENABLE();
@@ -54,21 +68,11 @@ void Alarm::Init(){
 }
 //Define the interrupt function here, because I want to include every aspect of the RTC in this source code
 
-void Alarm::SetNext(uint8_t minutes, uint8_t seconds, bool reoccuring){
-	AlarmMinutes=minutes;
-	AlarmSeconds=seconds;
-	ReuccuringAlarm=reoccuring;
-InitializeAlarm(0,AlarmMinutes,AlarmSeconds,RTC_ALARM_A);
-}
-
-
-void Alarm::InitializeAlarm(uint8_t hours, uint8_t minutes, uint8_t seconds, uint32_t alarm){
-	HAL_RTC_DeactivateAlarm( &hrtc, RTC_ALARM_A );
+void Alarm::set(uint8_t hours, uint8_t minutes, uint8_t seconds){
 	RTC_TimeTypeDef CurrentTime;
-	HAL_RTC_GetTime(&hrtc,&CurrentTime,RTC_FORMAT_BIN);
-	RTC_AlarmTypeDef sAlarm;
-
-	//
+	RTC_DateTypeDef sDate;
+	HAL_RTC_GetTime(&RealTimeClock::hrtc,&CurrentTime,RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&RealTimeClock::hrtc,&sDate,RTC_FORMAT_BIN);
 	sAlarm.AlarmTime.Seconds=CurrentTime.Seconds+seconds;
 	while(sAlarm.AlarmTime.Seconds>=60){
 		sAlarm.AlarmTime.Seconds-=60;
@@ -84,32 +88,22 @@ void Alarm::InitializeAlarm(uint8_t hours, uint8_t minutes, uint8_t seconds, uin
 		sAlarm.AlarmTime.Hours-=24;
 	}
 
-		  sAlarm.AlarmTime.SubSeconds = 0x0;
-		  sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-		  sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_SET;
-		  sAlarm.AlarmMask =RTC_ALARMMASK_HOURS |RTC_ALARMMASK_DATEWEEKDAY;
-		  sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
-		  sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
-		  sAlarm.AlarmDateWeekDay = 0x1;
-		  sAlarm.Alarm = RTC_ALARM_B;
-		  HAL_RTC_GetTime(&Alarm::hrtc,&CurrentTime,RTC_FORMAT_BCD);
-	if (HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BIN) != HAL_OK)
+	if (HAL_RTC_SetAlarm_IT(&RealTimeClock::hrtc, &sAlarm, RTC_FORMAT_BIN) != HAL_OK)
 	{
 	  //_Error_Handler(__FILE__, __LINE__);
 	}
-
 }
-
+void Alarm::deactivate(){
+	HAL_RTC_DeactivateAlarm(&RealTimeClock::hrtc,sAlarm.Alarm);
+}
 
 void RTC_IRQHandler(void)
 {
-  HAL_RTC_AlarmIRQHandler(&Alarm::hrtc);
+  HAL_RTC_AlarmIRQHandler(&RealTimeClock::hrtc);
 }
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
-int i=0;
-i++;
+	RealTimeClock::AlarmA.Callback();
 }
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc){
-int i=0;
-i++;
+	RealTimeClock::AlarmB.Callback();
 }

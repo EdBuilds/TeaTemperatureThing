@@ -9,19 +9,19 @@
 */
 
 
+#include <RealTimeClock.hpp>
 #include "stm32l0xx.h"
 #include "stm32l0xx_nucleo_32.h"
 #include "display_driver.hpp"
 #include "Buzzer_driver.hpp"
-#include "Alarm.hpp"
 #include "stm32l0xx_hal_rtc.h"
 void SystemClock_Config(void);
 void SystemPower_Config(void);
 void _Error_Handler(char *file, int line);
-Alarm alarm;
+RealTimeClock alarm;
 int main(void)
 {
-	HAL_Init();
+HAL_Init();
 SystemClock_Config();
 SystemPower_Config();
 //Buzzer buzzer;
@@ -31,9 +31,8 @@ SystemPower_Config();
 //__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 
 alarm.Init();
-HAL_Delay(4000);
-alarm.SetNext(0,5,false);
-
+HAL_Delay(10000);
+alarm.AlarmA.set(0,0,8);
  /* Disable GPIOs clock */
 // __HAL_RCC_GPIOA_CLK_DISABLE();
 // __HAL_RCC_GPIOB_CLK_DISABLE();
@@ -45,8 +44,10 @@ alarm.SetNext(0,5,false);
 //HAL_PWR_EnterSTANDBYMode();
 	for(;;){
 		RTC_TimeTypeDef CurrentTime;
-			HAL_RTC_GetTime(&Alarm::hrtc,&CurrentTime,RTC_FORMAT_BCD);
-			HAL_Delay(1000);
+		RTC_DateTypeDef sDate;
+			//HAL_RTC_GetTime(&RealTimeClock::hrtc,&CurrentTime,RTC_FORMAT_BIN);
+			//HAL_RTC_GetDate(&RealTimeClock::hrtc,&sDate,RTC_FORMAT_BIN);
+			//HAL_Delay(1000);
 	}
 }
 //Cleanup this code dude

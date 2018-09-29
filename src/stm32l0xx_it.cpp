@@ -15,7 +15,7 @@
 #include <cmsis_os.h>
 #endif
 #include "stm32l0xx_it.h"
-#include "Alarm.hpp"
+#include <RealTimeClock.hpp>
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
