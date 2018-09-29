@@ -31,7 +31,9 @@ SystemPower_Config();
 //__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 
 alarm.Init();
-alarm.SetNext(0,10,false);
+HAL_Delay(4000);
+alarm.SetNext(0,5,false);
+
  /* Disable GPIOs clock */
 // __HAL_RCC_GPIOA_CLK_DISABLE();
 // __HAL_RCC_GPIOB_CLK_DISABLE();
@@ -42,6 +44,9 @@ alarm.SetNext(0,10,false);
 //HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 //HAL_PWR_EnterSTANDBYMode();
 	for(;;){
+		RTC_TimeTypeDef CurrentTime;
+			HAL_RTC_GetTime(&Alarm::hrtc,&CurrentTime,RTC_FORMAT_BCD);
+			HAL_Delay(1000);
 	}
 }
 //Cleanup this code dude
