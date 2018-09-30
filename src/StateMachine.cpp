@@ -5,21 +5,20 @@
  *      Author: tamas
  */
 #include "StateMachine.hpp"
-Machine::Machine(unsigned int inStockQuantity){
+ RealTimeClock StateMachine::AlarmClock;
+ State StateMachine::CurrentState;
+void StateMachine::Init(){
+	CurrentState = &State1;
+	AlarmClock.Init(&CurrentState);
+	AlarmClock.AlarmA.set(0,0,8);
 }
-
-Machine::~Machine() {
-    delete mState;
+void StateMachine::State1(Signal s){
+	s;
+	s++;
+	CurrentState = &StateMachine::State2;
+	AlarmClock.AlarmA.set(0,0,8);
 }
-
-void Machine::sell(unsigned int quantity) {
-    mState->sell(*this, quantity);
-}
-
-void Machine::refill(unsigned int quantity) {
-    mState->refill(*this, quantity);
-}
-
-unsigned int Machine::getCurrentStock() {
-    return mStockQuantity;
+void StateMachine::State2(Signal s){
+	s;
+	s++;
 }

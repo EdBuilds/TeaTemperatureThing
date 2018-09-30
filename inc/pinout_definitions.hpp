@@ -50,5 +50,16 @@
 #define BLOCK_2_PORT_F
 #define BLOCK_2_PORT_G
 #define BLOCK_2_PORT_SP
-
+//state definitions I put it here instead of the StateMachine header, to prevent circular dependencies
+typedef uint8_t Signal;
+typedef void(*State)(Signal);
+enum
+{
+	SIG_ALARM_A,
+	SIG_ALARM_B,
+	SIG_BUTTON_1_DN,
+	SIG_BUTTON_1_UP,
+	SIG_BUTTON_2_DN,
+	SIG_BUTTON_2_UP
+};
 #endif /* PINOUT_DEFINITIONS_HPP_ */

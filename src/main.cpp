@@ -20,7 +20,6 @@ void SystemClock_Config(void);
 void SystemPower_Config(void);
 void _Error_Handler(char *file, int line);
 RealTimeClock alarm;
-Machine testmachine(5);
 int main(void)
 {
 HAL_Init();
@@ -31,9 +30,10 @@ SystemPower_Config();
 //buzzer.setFrequency(16000);
 //buzzer.start();
 //__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
-
+StateMachine machine;
+machine.Init();
 //alarm.Init();
-HAL_Delay(10000);
+//HAL_Delay(10000);
 //alarm.AlarmA.set(0,0,8);
  /* Disable GPIOs clock */
 // __HAL_RCC_GPIOA_CLK_DISABLE();

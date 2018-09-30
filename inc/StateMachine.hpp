@@ -7,19 +7,16 @@
 
 #ifndef STATEMACHINE_HPP_
 #define STATEMACHINE_HPP_
-#include "States.hpp"
-
-class AbstractState;
-class Machine {
+#include "pinout_definitions.hpp"
+#include "RealTimeClock.hpp"
+class StateMachine {
     public:
-        Machine(unsigned int inStockQuantity);
-        void sell(unsigned int quantity);
-        void refill(unsigned int quantity);
-        unsigned int getCurrentStock();
-        ~Machine();
-        AbstractState* mState;
+	 static RealTimeClock AlarmClock;
+	void Init();
     private:
-        unsigned int mStockQuantity;
+	static State CurrentState;
+	 static void State1(Signal s);
+	 static void State2(Signal s);
 };
 
 #endif /* STATEMACHINE_HPP_ */
