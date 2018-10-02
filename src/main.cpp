@@ -16,6 +16,7 @@
 #include "Buzzer_driver.hpp"
 #include "stm32l0xx_hal_rtc.h"
 #include "StateMachine.hpp"
+#include "Button_driver.hpp"
 void SystemClock_Config(void);
 void SystemPower_Config(void);
 void _Error_Handler(char *file, int line);

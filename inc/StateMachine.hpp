@@ -9,6 +9,7 @@
 #define STATEMACHINE_HPP_
 #include "pinout_definitions.hpp"
 #include "RealTimeClock.hpp"
+#include "Button_driver.hpp"
 class StateMachine {
     public:
 	 static RealTimeClock AlarmClock;
@@ -23,6 +24,7 @@ class StateMachine {
 	 static void Cooling_state(Signal s);
 	 static void Alarm_state(Signal s);
 	 static void TemperatureSet_state(Signal s);
+	 static Button Buttons;
 };
 
 #endif /* STATEMACHINE_HPP_ */

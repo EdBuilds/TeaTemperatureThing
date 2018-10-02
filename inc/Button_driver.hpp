@@ -7,9 +7,13 @@
 
 #ifndef BUTTON_DRIVER_HPP_
 #define BUTTON_DRIVER_HPP_
-
+#include "pinout_definitions.hpp"
 class Button{
-void Init();
+public:
+	static State *ButtonCallback;
+void Init(State *buttonCallback);
+private:
+
 };
 
 

@@ -50,6 +50,17 @@
 #define BLOCK_2_PORT_F
 #define BLOCK_2_PORT_G
 #define BLOCK_2_PORT_SP
+
+
+//Button pin definitions
+#define BUTTON_1_PIN GPIO_PIN_0
+#define BUTTON_2_PIN GPIO_PIN_2
+#define BUTTON_1_PORT GPIOA
+#define BUTTON_2_PORT GPIOA
+#define BUTTON_1_ITn EXTI0_1_IRQn
+#define BUTTON_2_ITn EXTI2_3_IRQn
+
+
 //state definitions I put it here instead of the StateMachine header, to prevent circular dependencies
 typedef uint8_t Signal;
 typedef void(*State)(Signal);
