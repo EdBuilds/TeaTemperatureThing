@@ -15,8 +15,14 @@ class StateMachine {
 	void Init();
     private:
 	static State CurrentState;
-	 static void State1(Signal s);
-	 static void State2(Signal s);
+	static void transition(State NewState);
+	 static void Standby_state(Signal s);
+	 static void BattCheck_state(Signal s);
+	 static void ButtonDown_state(Signal s);
+	 static void Warming_state(Signal s);
+	 static void Cooling_state(Signal s);
+	 static void Alarm_state(Signal s);
+	 static void TemperatureSet_state(Signal s);
 };
 
 #endif /* STATEMACHINE_HPP_ */
