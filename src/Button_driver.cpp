@@ -19,7 +19,7 @@ void Button::Init(SignalCallback buttonCallback){
 
 	  GPIO_InitTypeDef GPIO_InitStruct;
 	  GPIO_InitStruct.Pin = BUTTON_1_PIN;
-	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
 	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	  HAL_GPIO_Init(BUTTON_1_PORT, &GPIO_InitStruct);
 
@@ -36,9 +36,17 @@ void Button::Init(SignalCallback buttonCallback){
 
 }
 
+void Button::Disable(IRQn_Type InterruptRoutine){
+	HAL_NVIC_DisableIRQ(InterruptRoutine);
+}
+void Button::Enable(IRQn_Type InterruptRoutine){
+	HAL_NVIC_SetPriority(InterruptRoutine, 0, 0);
+	HAL_NVIC_EnableIRQ(InterruptRoutine);
+}
 
 void EXTI0_1_IRQHandler(void)
 {
+Button::Disable(BUTTON_1_ITn);
 	HAL_GPIO_EXTI_IRQHandler(BUTTON_1_PIN);
 
 	if(HAL_GPIO_ReadPin(BUTTON_1_PORT,BUTTON_1_PIN)==GPIO_PIN_SET){
@@ -51,7 +59,7 @@ void EXTI0_1_IRQHandler(void)
 
 void EXTI2_3_IRQHandler(void)
 {
-	HAL_Delay(5);
+Button::Disable(BUTTON_2_ITn);
     HAL_GPIO_EXTI_IRQHandler(BUTTON_2_PIN);
 	if(HAL_GPIO_ReadPin(BUTTON_2_PORT,BUTTON_2_PIN)==GPIO_PIN_SET){
 		Button::ButtonCallback(SIG_BUTTON_2_DN);

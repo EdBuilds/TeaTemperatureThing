@@ -24,6 +24,15 @@ void StateMachine::Update(){
 if(NextSignal==SIG_NONE){
 	return;
 }
+//Debouncing the buttons by using a small delay, and then reenabling the interrupt routines
+//It would be much cleaner to use a timer for this, but Im getting fed up with these buttons.
+if(NextSignal==SIG_BUTTON_1_UP||NextSignal==SIG_BUTTON_1_DN){
+	HAL_Delay(5);
+	Buttons.Enable(BUTTON_1_ITn);
+}else if(NextSignal==SIG_BUTTON_2_UP||NextSignal==SIG_BUTTON_2_DN){
+	HAL_Delay(5);
+	Buttons.Enable(BUTTON_2_ITn);
+}
 //a temporary signal container needs to be created here to be able to set the NextSignal to NONE,
 //because the handling of the current state can take a long time, and if an interrupt sets the signal, it would be owerwritten.
 //
@@ -69,10 +78,7 @@ void StateMachine::Standby_state(Signal s){
 		case SIG_BUTTON_2_UP:
 
 			break;
-		default:
-			i+=100;
 	}
-	HAL_Delay(i);
 }
 void StateMachine::BattCheck_state(Signal s){
 switch(s){

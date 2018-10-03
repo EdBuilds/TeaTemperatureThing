@@ -12,6 +12,8 @@ class Button{
 public:
 	static SignalCallback ButtonCallback;
 void Init(SignalCallback buttonCallback);
+static void Disable(IRQn_Type InterruptRoutine);
+static void Enable(IRQn_Type InterruptRoutine);
 private:
 
 };
