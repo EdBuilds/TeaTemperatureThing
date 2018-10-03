@@ -12,7 +12,7 @@
 RTC_HandleTypeDef RealTimeClock::hrtc=RTC_HandleTypeDef();
 Alarm RealTimeClock::AlarmA;
 Alarm RealTimeClock::AlarmB;
-void RealTimeClock::Init(State *AlarmCallback){
+void RealTimeClock::Init(SignalCallback AlarmCallback){
 	RTC_AlarmTypeDef sAlarm;
 	  sAlarm.AlarmTime.SubSeconds = 0x0;
 	  sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
@@ -26,7 +26,6 @@ void RealTimeClock::Init(State *AlarmCallback){
 	  sAlarm.Alarm = RTC_ALARM_A;
 	  AlarmA=Alarm(sAlarm,AlarmCallback);
 	HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_A);
-	HAL_RTC_DeInit(&hrtc);
 	  __HAL_RCC_RTC_ENABLE();
 	  RTC_TimeTypeDef sTime;
 	  RTC_DateTypeDef sDate;
@@ -102,8 +101,8 @@ void RTC_IRQHandler(void)
   HAL_RTC_AlarmIRQHandler(&RealTimeClock::hrtc);
 }
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
-	RealTimeClock::AlarmA.AlarmCallback[0](SIG_ALARM_A);
+	RealTimeClock::AlarmA.AlarmCallback(SIG_ALARM_A);
 }
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc){
-	RealTimeClock::AlarmB.AlarmCallback[0](SIG_ALARM_B);
+	RealTimeClock::AlarmB.AlarmCallback(SIG_ALARM_B);
 }

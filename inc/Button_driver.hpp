@@ -10,8 +10,8 @@
 #include "pinout_definitions.hpp"
 class Button{
 public:
-	static State *ButtonCallback;
-void Init(State *buttonCallback);
+	static SignalCallback ButtonCallback;
+void Init(SignalCallback buttonCallback);
 private:
 
 };

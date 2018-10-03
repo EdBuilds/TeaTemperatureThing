@@ -23,34 +23,14 @@ void _Error_Handler(char *file, int line);
 RealTimeClock alarm;
 int main(void)
 {
-HAL_Init();
 SystemClock_Config();
 SystemPower_Config();
-//Buzzer buzzer;
-//buzzer.init_timer();
-//buzzer.setFrequency(16000);
-//buzzer.start();
-//__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+HAL_Init();
+
 StateMachine machine;
 machine.Init();
-//alarm.Init();
-//HAL_Delay(10000);
-//alarm.AlarmA.set(0,0,8);
- /* Disable GPIOs clock */
-// __HAL_RCC_GPIOA_CLK_DISABLE();
-// __HAL_RCC_GPIOB_CLK_DISABLE();
- /* Enter Stop Mode */
-//HAL_SuspendTick();
-//HAL_RCC_DeInit();
-// HAL_DeInit();
-//HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-//HAL_PWR_EnterSTANDBYMode();
 	for(;;){
-		RTC_TimeTypeDef CurrentTime;
-		RTC_DateTypeDef sDate;
-			//HAL_RTC_GetTime(&RealTimeClock::hrtc,&CurrentTime,RTC_FORMAT_BIN);
-			//HAL_RTC_GetDate(&RealTimeClock::hrtc,&sDate,RTC_FORMAT_BIN);
-			//HAL_Delay(1000);
+		machine.Update();
 	}
 }
 //Cleanup this code dude

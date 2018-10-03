@@ -63,9 +63,10 @@
 
 //state definitions I put it here instead of the StateMachine header, to prevent circular dependencies
 typedef uint8_t Signal;
-typedef void(*State)(Signal);
+typedef void(*SignalCallback)(Signal);
 enum
 {
+	SIG_NONE,
 	SIG_ALARM_A,
 	SIG_ALARM_B,
 	SIG_BUTTON_1_DN,

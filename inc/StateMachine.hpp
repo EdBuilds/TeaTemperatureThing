@@ -10,12 +10,18 @@
 #include "pinout_definitions.hpp"
 #include "RealTimeClock.hpp"
 #include "Button_driver.hpp"
+typedef void(*State)(Signal);
 class StateMachine {
     public:
 	 static RealTimeClock AlarmClock;
+
 	void Init();
+	void Update();
     private:
 	static State CurrentState;
+	static Signal NextSignal;
+	static void SetNextSignal(Signal s);
+
 	static void transition(State NewState);
 	 static void Standby_state(Signal s);
 	 static void BattCheck_state(Signal s);

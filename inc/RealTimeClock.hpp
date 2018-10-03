@@ -19,8 +19,8 @@ void RTC_IRQHandler(void);
 class Alarm{
 	RTC_AlarmTypeDef sAlarm;
 public:
-	State *AlarmCallback;
-	Alarm(RTC_AlarmTypeDef alarmInstance,State *alarmXCallback):sAlarm(alarmInstance)
+	SignalCallback AlarmCallback;
+	Alarm(RTC_AlarmTypeDef alarmInstance,SignalCallback alarmXCallback):sAlarm(alarmInstance)
 	,AlarmCallback(alarmXCallback){}
 	Alarm(){}
 void deactivate();
@@ -32,7 +32,7 @@ public:
 static RTC_HandleTypeDef hrtc;
 static Alarm AlarmA;
 static Alarm AlarmB;
-void Init(State *AlarmCallback);
+void Init(SignalCallback AlarmCallback);
 };
 
 

@@ -9,8 +9,8 @@
 #include "stm32l0xx.h"
 #include "stm32l0xx_it.h"
 #include "pinout_definitions.hpp"
- State *Button::ButtonCallback;
-void Button::Init(State *buttonCallback){
+ SignalCallback Button::ButtonCallback;
+void Button::Init(SignalCallback buttonCallback){
 	ButtonCallback=buttonCallback;
 	  /* GPIO Ports Clock Enable */
 	  __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -35,34 +35,28 @@ void Button::Init(State *buttonCallback){
 	  HAL_NVIC_EnableIRQ(BUTTON_2_ITn);
 
 }
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	if(HAL_GPIO_ReadPin(BUTTON_1_PORT,GPIO_Pin)==GPIO_PIN_SET){
-		if(BUTTON_1_PIN==GPIO_Pin){
-		Button::ButtonCallback[0](SIG_BUTTON_1_DN);
-		}else if(BUTTON_2_PIN==GPIO_Pin){
-		Button::ButtonCallback[0](SIG_BUTTON_2_DN);
-		}
-	}else{
-		if(BUTTON_1_PIN==GPIO_Pin){
-		Button::ButtonCallback[0](SIG_BUTTON_1_UP);
-		}else if(BUTTON_2_PIN==GPIO_Pin){
-		Button::ButtonCallback[0](SIG_BUTTON_2_UP);
-		}
-	}
 
-}
 
 void EXTI0_1_IRQHandler(void)
 {
+	HAL_GPIO_EXTI_IRQHandler(BUTTON_1_PIN);
 
-  HAL_GPIO_EXTI_IRQHandler(BUTTON_1_PIN);
-
+	if(HAL_GPIO_ReadPin(BUTTON_1_PORT,BUTTON_1_PIN)==GPIO_PIN_SET){
+		Button::ButtonCallback(SIG_BUTTON_1_DN);
+	}else{
+		Button::ButtonCallback(SIG_BUTTON_1_UP);
+	}
 }
 
 
 void EXTI2_3_IRQHandler(void)
 {
-
-  HAL_GPIO_EXTI_IRQHandler(BUTTON_2_PIN);
+	HAL_Delay(5);
+    HAL_GPIO_EXTI_IRQHandler(BUTTON_2_PIN);
+	if(HAL_GPIO_ReadPin(BUTTON_2_PORT,BUTTON_2_PIN)==GPIO_PIN_SET){
+		Button::ButtonCallback(SIG_BUTTON_2_DN);
+	}else{
+		Button::ButtonCallback(SIG_BUTTON_2_UP);
+	}
 
 }

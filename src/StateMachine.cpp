@@ -6,19 +6,38 @@
  */
 #include "StateMachine.hpp"
 #include "stm32l0xx.h"
+#include "pinout_definitions.hpp"
  RealTimeClock StateMachine::AlarmClock;
  State StateMachine::CurrentState;
+ Signal StateMachine::NextSignal;
  Button StateMachine::Buttons;
+
 void StateMachine::Init(){
 	transition(&Standby_state);
-	AlarmClock.Init(&CurrentState);
+	//AlarmClock.Init(&CurrentState);
 	//AlarmClock.AlarmA.set(0,0,8);
-	Buttons.Init(&CurrentState);
+	Buttons.Init(&SetNextSignal);
 }
-/**
- *
- * @param NewState
- */
+
+
+void StateMachine::Update(){
+if(NextSignal==SIG_NONE){
+	return;
+}
+//a temporary signal container needs to be created here to be able to set the NextSignal to NONE,
+//because the handling of the current state can take a long time, and if an interrupt sets the signal, it would be owerwritten.
+//
+Signal temporarySignal=NextSignal;
+NextSignal=SIG_NONE;
+CurrentState(temporarySignal);
+}
+ void StateMachine::SetNextSignal(Signal s){
+	 NextSignal=s;
+ }
+
+
+
+
  void StateMachine::transition(State NewState){
 	 if(CurrentState!=NULL){
 		 CurrentState(SIG_EXIT);
