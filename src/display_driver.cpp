@@ -5,7 +5,12 @@
  *      Author: tamas
  */
 #include "display_driver.hpp"
+#include "stm32l011xx.h"
+#include "stm32l0xx_it.h"
+#include "stm32l0xx_hal.h"
 #define ASCII_OFFSET 32
+TIM_HandleTypeDef Display::htim21;
+
 void Display::segmentBlock::set(const uint8_t & segment){
 	//when the pin is set low, the LED turns on, because of the lame common anode 7 segment display
 PinSetting[segment]=GPIO_PIN_RESET;
@@ -32,10 +37,19 @@ for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
 	PinSetting[i]=GPIO_PIN_SET;
 	}
 }
+
+void Display::segmentBlock::on(){
+EnablePin.set();
+}
+void Display::segmentBlock::off(){
+EnablePin.reset();
+}
+
 void Display::segmentBlock::update(){
 	for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
 		Pins[i].set(PinSetting[i]);
 	}
+	on();
 }
 void Display::Print(char* stringToPrint){
 	for(int i=0; i<CONNECTED_BLOCKS; i++){
@@ -58,7 +72,7 @@ for(int i=0; i<CONNECTED_BLOCKS; i++){
 }
 }
 
-	void Display::segmentBlock::setAsbinary(const uint8_t & binaryList){
+void Display::segmentBlock::setAsbinary(const uint8_t & binaryList){
 		for( int i=0; i<SEGMENT_NUMBER_IN_BLOCK; i++){
 			if((binaryList >> i) & 1){		//checking each bit of the input
 				set(i);
@@ -68,10 +82,13 @@ for(int i=0; i<CONNECTED_BLOCKS; i++){
 		}
 	}
 Display::segmentBlock::segmentBlock(){}
-	 Display::segmentBlock::segmentBlock(uint16_t * pins,GPIO_TypeDef ** ports){
+
+
+Display::segmentBlock::segmentBlock(uint16_t * segmentPins,GPIO_TypeDef ** segmentPorts, uint16_t enablePin, GPIO_TypeDef * enablePort){
 		for(int i=0 ; i<SEGMENT_NUMBER_IN_BLOCK;i++){
-			Pins[i]=OutputPin(pins[i],ports[i]);
+			Pins[i]=OutputPin(segmentPins[i],segmentPorts[i]);
 		}
+EnablePin=OutputPin(enablePin,enablePort);
 	}
 Display::Display(){
 uint16_t Block1Pins[]={BLOCK_1_PIN_A,
@@ -90,8 +107,68 @@ GPIO_TypeDef* Block1Ports[]={BLOCK_1_PORT_A,
 		 BLOCK_1_PORT_F,
 		 BLOCK_1_PORT_G,
 		 BLOCK_1_PORT_SP};
-	Blocks[0]=segmentBlock(Block1Pins,Block1Ports);
+	Blocks[0]=segmentBlock(Block1Pins,Block1Ports,BLOCK_1_ENABLE_PIN, BLOCK_1_ENABLE_PORT);
+	//Blocks[1]=segmentBlock(Block1Pins,Block1Ports,BLOCK_2_ENABLE_PIN, BLOCK_2_ENABLE_PORT);
 }
+
+void Display::Init(){
+    __HAL_RCC_TIM21_CLK_ENABLE();
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+  htim21=TIM_HandleTypeDef();
+  htim21.Instance = TIM21;
+  htim21.Init.Prescaler = 16;
+  htim21.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim21.Init.Period = 1000;
+  htim21.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_Base_Init(&htim21) != HAL_OK)
+  {
+    //_Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim21, &sClockSourceConfig) != HAL_OK)
+  {
+    //_Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim21, &sMasterConfig) != HAL_OK)
+  {
+    //_Error_Handler(__FILE__, __LINE__);
+  }
+
+    /* TIM21 interrupt Init */
+    HAL_NVIC_SetPriority(TIM21_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM21_IRQn);
+
+  if (HAL_TIM_Base_Start_IT(&htim21) != HAL_OK)
+  {
+    //_Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+void Display::TimerCallback(){
+
+}
+
+void TIM21_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM21_IRQn 0 */
+
+  /* USER CODE END TIM21_IRQn 0 */
+  HAL_TIM_IRQHandler(&Display::htim21);
+  /* USER CODE BEGIN TIM21_IRQn 1 */
+
+  /* USER CODE END TIM21_IRQn 1 */
+}
+
+
+
+
+
 
 
 //Defining ASCII to 7 segments here, not to clutter the .h

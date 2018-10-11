@@ -26,11 +26,15 @@ int main(void)
 SystemClock_Config();
 SystemPower_Config();
 HAL_Init();
-
-StateMachine machine;
-machine.Init();
+Display display;
+display.Init();
+//display.Print("2");
+//StateMachine machine;
+//machine.Init();
+int i=0;
 	for(;;){
-		machine.Update();
+//		machine.Update();
+		i++;
 	}
 }
 //Cleanup this code dude
