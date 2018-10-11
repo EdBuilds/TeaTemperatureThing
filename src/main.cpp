@@ -23,18 +23,25 @@ void _Error_Handler(char *file, int line);
 RealTimeClock alarm;
 int main(void)
 {
+HAL_Init();
 SystemClock_Config();
 SystemPower_Config();
-HAL_Init();
 Display display;
 display.Init();
-//display.Print("2");
+display.Print("23");
+char *string="Lo batt";
+while(string[1]!=0){
+display.Print(string);
+++string;
+HAL_Delay(500);
+}
 //StateMachine machine;
 //machine.Init();
 int i=0;
 	for(;;){
+		int timerValue = __HAL_TIM_GET_COUNTER(&Display::htim21);
 //		machine.Update();
-		i++;
+		timerValue++;
 	}
 }
 //Cleanup this code dude

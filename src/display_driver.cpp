@@ -10,7 +10,8 @@
 #include "stm32l0xx_hal.h"
 #define ASCII_OFFSET 32
 TIM_HandleTypeDef Display::htim21;
-
+int Display::activeBlock=0;
+Display::segmentBlock Display::Blocks[CONNECTED_BLOCKS];
 void Display::segmentBlock::set(const uint8_t & segment){
 	//when the pin is set low, the LED turns on, because of the lame common anode 7 segment display
 PinSetting[segment]=GPIO_PIN_RESET;
@@ -49,7 +50,6 @@ void Display::segmentBlock::update(){
 	for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
 		Pins[i].set(PinSetting[i]);
 	}
-	on();
 }
 void Display::Print(char* stringToPrint){
 	for(int i=0; i<CONNECTED_BLOCKS; i++){
@@ -108,7 +108,7 @@ GPIO_TypeDef* Block1Ports[]={BLOCK_1_PORT_A,
 		 BLOCK_1_PORT_G,
 		 BLOCK_1_PORT_SP};
 	Blocks[0]=segmentBlock(Block1Pins,Block1Ports,BLOCK_1_ENABLE_PIN, BLOCK_1_ENABLE_PORT);
-	//Blocks[1]=segmentBlock(Block1Pins,Block1Ports,BLOCK_2_ENABLE_PIN, BLOCK_2_ENABLE_PORT);
+	Blocks[1]=segmentBlock(Block1Pins,Block1Ports,BLOCK_2_ENABLE_PIN, BLOCK_2_ENABLE_PORT);
 }
 
 void Display::Init(){
@@ -118,7 +118,7 @@ void Display::Init(){
   TIM_MasterConfigTypeDef sMasterConfig;
   htim21=TIM_HandleTypeDef();
   htim21.Instance = TIM21;
-  htim21.Init.Prescaler = 16;
+  htim21.Init.Prescaler = 16-1;
   htim21.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim21.Init.Period = 1000;
   htim21.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -151,7 +151,10 @@ void Display::Init(){
 
 }
 void Display::TimerCallback(){
-
+	Blocks[activeBlock].off();
+	activeBlock=(++activeBlock)%CONNECTED_BLOCKS;
+	Blocks[activeBlock].update();
+	Blocks[activeBlock].on();
 }
 
 void TIM21_IRQHandler(void)
@@ -161,7 +164,7 @@ void TIM21_IRQHandler(void)
   /* USER CODE END TIM21_IRQn 0 */
   HAL_TIM_IRQHandler(&Display::htim21);
   /* USER CODE BEGIN TIM21_IRQn 1 */
-
+  Display::TimerCallback();
   /* USER CODE END TIM21_IRQn 1 */
 }
 

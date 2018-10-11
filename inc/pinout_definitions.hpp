@@ -16,7 +16,7 @@
 
 //Display pin definitions
 #define SEGMENT_NUMBER_IN_BLOCK 8	//I made a define for this, just to make a define
-#define CONNECTED_BLOCKS 1 			//these defines are really not necessary, what am I doing?
+#define CONNECTED_BLOCKS 2 			//these defines are really not necessary, what am I doing?
 #define BLOCK_1_PIN_A GPIO_PIN_12
 #define BLOCK_1_PIN_B GPIO_PIN_0
 #define BLOCK_1_PIN_C GPIO_PIN_7
