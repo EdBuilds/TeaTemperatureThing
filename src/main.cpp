@@ -8,7 +8,8 @@
   ******************************************************************************
 */
 
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <RealTimeClock.hpp>
 #include "stm32l0xx.h"
 #include "stm32l0xx_nucleo_32.h"
@@ -17,6 +18,7 @@
 #include "stm32l0xx_hal_rtc.h"
 #include "StateMachine.hpp"
 #include "Button_driver.hpp"
+#include "Thermometer_driver.hpp"
 void SystemClock_Config(void);
 void SystemPower_Config(void);
 void _Error_Handler(char *file, int line);
@@ -26,18 +28,23 @@ int main(void)
 HAL_Init();
 SystemClock_Config();
 SystemPower_Config();
+Thermometer thermometer;
 Display display;
 display.Init();
 display.Print("23");
-char *string="Lo batt";
-display.Print(string);
+char buffer [33];
+display.Print(buffer);
+
 //StateMachine machine;
 //machine.Init();
-	for(;;){
 display.Enable();
+	for(;;){
+	int temp=thermometer.measure();
+	itoa(temp,buffer,10);
+display.Print(buffer);
+
 HAL_Delay(500);
-display.Disable();
-HAL_Delay(500);
+
 	}
 }
 //Cleanup this code dude

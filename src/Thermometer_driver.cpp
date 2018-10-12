@@ -13,23 +13,17 @@
 #include "stm32l0xx_hal_gpio.h"
 #include "stm32l0xx_nucleo_32.h"
 Thermometer::Thermometer(): ReferenceEnable(THERMOMETER_REFERENCE_PIN,THERMOMETER_REFERENCE_PORT){
-	GPIO_InitTypeDef gpioInit;
-
-	    __GPIOC_CLK_ENABLE();
 	    __HAL_RCC_ADC1_CLK_ENABLE();
-
+		GPIO_InitTypeDef gpioInit;
 	    gpioInit.Pin = THERMOMETER_PIN;
 	    gpioInit.Mode = GPIO_MODE_ANALOG;
 	    gpioInit.Pull = GPIO_NOPULL;
 	    HAL_GPIO_Init(THERMOMETER_PORT, &gpioInit);
 
-	    HAL_NVIC_SetPriority(ADC1_COMP_IRQn, 0, 0);
-	    HAL_NVIC_EnableIRQ(ADC1_COMP_IRQn);
 	    AdcHandle=ADC_HandleTypeDef();
 	    AdcChannel=ADC_ChannelConfTypeDef();
 
 	    AdcHandle.Instance = THERMOMETER_ADC_INSTANCE;
-
 	    AdcHandle.Init.ClockPrescaler = ADC_CLOCKPRESCALER_PCLK_DIV2;
 	    AdcHandle.Init.Resolution = ADC_RESOLUTION_12B;
 	    AdcHandle.Init.ScanConvMode = DISABLE;
@@ -51,18 +45,19 @@ Thermometer::Thermometer(): ReferenceEnable(THERMOMETER_REFERENCE_PIN,THERMOMETE
 	        asm("bkpt 255");
 	    }
 	    //Initialize reference pin
-	   ReferenceEnable.reset();
+	   //ReferenceEnable.reset();
 	}
 uint16_t Thermometer::measure(){
 	uint16_t returnValue=0;
-    ReferenceEnable.set();
+    //ReferenceEnable.set();
     //It takes around 4 us for the voltage to stabilize, It would be a good idea to put a 5 us delay here.
 	HAL_ADC_Start(&AdcHandle);
-	if (HAL_ADC_PollForConversion(&AdcHandle, 1000000) == HAL_OK)
+	if (HAL_ADC_PollForConversion(&AdcHandle, 1000) == HAL_OK)
 	{
 	     returnValue=HAL_ADC_GetValue(&AdcHandle);
 	}
-    ReferenceEnable.reset();
+	HAL_ADC_Stop(&AdcHandle);
+    //ReferenceEnable.reset();
 return returnValue;
 }
 
