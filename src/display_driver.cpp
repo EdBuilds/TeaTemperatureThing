@@ -143,13 +143,26 @@ void Display::Init(){
     /* TIM21 interrupt Init */
     HAL_NVIC_SetPriority(TIM21_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM21_IRQn);
-
-  if (HAL_TIM_Base_Start_IT(&htim21) != HAL_OK)
-  {
-    //_Error_Handler(__FILE__, __LINE__);
-  }
-
 }
+
+
+
+void Display::Enable(){
+	Blocks[activeBlock].on();
+if (HAL_TIM_Base_Start_IT(&htim21) != HAL_OK)
+{
+    //_Error_Handler(__FILE__, __LINE__);
+}
+}
+void Display::Disable(){
+if (HAL_TIM_Base_Stop_IT(&htim21) != HAL_OK)
+{
+    //_Error_Handler(__FILE__, __LINE__);
+}
+Blocks[activeBlock].off();
+}
+
+
 void Display::TimerCallback(){
 	Blocks[activeBlock].off();
 	activeBlock=(++activeBlock)%CONNECTED_BLOCKS;

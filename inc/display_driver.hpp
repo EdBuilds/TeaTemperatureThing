@@ -40,6 +40,8 @@ public:
 //I know this is a terrible varable naming, I take any suggestions
 	void Print(char* stringToPrint);
 	void Clear();
+	void Enable();
+	void Disable();
 	void All();
 };
 

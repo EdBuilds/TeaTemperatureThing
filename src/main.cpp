@@ -30,18 +30,14 @@ Display display;
 display.Init();
 display.Print("23");
 char *string="Lo batt";
-while(string[1]!=0){
 display.Print(string);
-++string;
-HAL_Delay(500);
-}
 //StateMachine machine;
 //machine.Init();
-int i=0;
 	for(;;){
-		int timerValue = __HAL_TIM_GET_COUNTER(&Display::htim21);
-//		machine.Update();
-		timerValue++;
+display.Enable();
+HAL_Delay(500);
+display.Disable();
+HAL_Delay(500);
 	}
 }
 //Cleanup this code dude
