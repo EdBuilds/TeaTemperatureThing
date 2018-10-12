@@ -11,13 +11,15 @@
  State StateMachine::CurrentState;
  Signal StateMachine::NextSignal;
  Button StateMachine::Buttons;
-
+ Thermometer StateMachine::thermometer;
+ Display  StateMachine::display;
 void StateMachine::Init(){
 	transition(&Standby_state);
 	AlarmClock.Init(&SetNextSignal);
 	//AlarmClock.AlarmA.set(0,0,8);
 	Buttons.Init(&SetNextSignal);
 	display.Init();
+	display.Enable();
 }
 
 
@@ -58,14 +60,20 @@ CurrentState(SIG_ENTRY);
 
 void StateMachine::Standby_state(Signal s){
 	switch(s){
-		case SIG_BUTTON_1_DN:
-		case SIG_BUTTON_2_DN:
-			transition(ButtonDown_state);
-			break;
+	case SIG_ENTRY:
+		display.Print("sb");
+		break;
+	case SIG_BUTTON_1_DN:
+	case SIG_BUTTON_2_DN:
+		transition(ButtonDown_state);
+		break;
 	}
 }
 void StateMachine::BattCheck_state(Signal s){
 switch(s){
+	case SIG_ENTRY:
+		display.Print("bc");
+		break;
 	case SIG_ALARM_A:
 
 		break;
@@ -89,6 +97,7 @@ switch(s){
 void StateMachine::ButtonDown_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
+		display.Print("bd");
 		AlarmClock.AlarmA.set(0,0,2);
 		break;
 	case SIG_ALARM_A: //the button is being pushed down for more than a 2 secs
@@ -102,8 +111,10 @@ switch(s){
 		break;
 	case SIG_BUTTON_1_UP:
 	case SIG_BUTTON_2_UP: //The button was released before the threshold time
-		AlarmClock.AlarmA.deactivate();
 		transition(BattCheck_state);
+		break;
+	case SIG_EXIT:
+		AlarmClock.AlarmA.deactivate();
 		break;
 }
 }
@@ -175,6 +186,9 @@ switch(s){
 }
 void StateMachine::TemperatureSet_state(Signal s){
 switch(s){
+	case SIG_ENTRY:
+display.Print("ts");
+		break;
 	case SIG_ALARM_A:
 
 		break;

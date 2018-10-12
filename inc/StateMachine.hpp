@@ -20,8 +20,8 @@ class StateMachine {
 	void Init();
 	void Update();
     private:
-	Thermometer thermometer;
-	Display display;
+	static Thermometer thermometer;
+	static Display display;
 	static State CurrentState;
 	static Signal NextSignal;
 	static void SetNextSignal(Signal s);

@@ -28,27 +28,10 @@ int main(void)
 HAL_Init();
 SystemClock_Config();
 SystemPower_Config();
-Thermometer thermometer;
-Display display;
-display.Init();
-display.Print("23");
-char buffer [33];
-display.Print(buffer);
-
-//StateMachine machine;
-//machine.Init();
-display.Enable();
+StateMachine machine;
+machine.Init();
 	for(;;){
-	int temp=thermometer.measure();
-	itoa(temp,buffer,10);
-display.Print(buffer);
-if(temp<4000){
-	temp++;
-}
-itoa(temp,buffer,10);
-display.Print(buffer);
-HAL_Delay(50);
-
+machine.Update();
 	}
 }
 //Cleanup this code dude
