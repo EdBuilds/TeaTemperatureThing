@@ -42,8 +42,12 @@ display.Enable();
 	int temp=thermometer.measure();
 	itoa(temp,buffer,10);
 display.Print(buffer);
-
-HAL_Delay(500);
+if(temp<4000){
+	temp++;
+}
+itoa(temp,buffer,10);
+display.Print(buffer);
+HAL_Delay(50);
 
 	}
 }
@@ -110,6 +114,6 @@ void SystemClock_Config(void)
  void SystemPower_Config(void)
  {
    __HAL_RCC_PWR_CLK_ENABLE();
-   HAL_PWREx_EnableUltraLowPower();
-   HAL_PWREx_EnableLowPowerRunMode();
+   //HAL_PWREx_EnableUltraLowPower();
+   //HAL_PWREx_EnableLowPowerRunMode();
  }

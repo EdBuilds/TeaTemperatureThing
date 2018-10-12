@@ -54,20 +54,20 @@ void Display::segmentBlock::update(){
 void Display::Print(char* stringToPrint){
 	for(int i=0; i<CONNECTED_BLOCKS; i++){
 		Blocks[i].setAsbinary(SevenSegmentASCII[uint8_t(stringToPrint[i])-ASCII_OFFSET]);
-		Blocks[i].update();
+		//Blocks[i].update();
 	}
 }
 void Display::Clear(){
 for(int i=0; i<CONNECTED_BLOCKS; i++){
 	Blocks[i].resetAll();
-	Blocks[i].update();
+	//Blocks[i].update();
 
 }
 }
 void Display::All(){
 for(int i=0; i<CONNECTED_BLOCKS; i++){
 	Blocks[i].setAll();
-	Blocks[i].update();
+	//Blocks[i].update();
 
 }
 }

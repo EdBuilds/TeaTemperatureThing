@@ -10,6 +10,8 @@
 #include "pinout_definitions.hpp"
 #include "RealTimeClock.hpp"
 #include "Button_driver.hpp"
+#include "Thermometer_driver.hpp"
+#include "display_driver.hpp"
 typedef void(*State)(Signal);
 class StateMachine {
     public:
@@ -18,6 +20,8 @@ class StateMachine {
 	void Init();
 	void Update();
     private:
+	Thermometer thermometer;
+	Display display;
 	static State CurrentState;
 	static Signal NextSignal;
 	static void SetNextSignal(Signal s);
