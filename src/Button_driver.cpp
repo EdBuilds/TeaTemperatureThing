@@ -40,7 +40,18 @@ void Button::Enable(IRQn_Type InterruptRoutine){
 	HAL_NVIC_SetPriority(InterruptRoutine, 0, 0);
 	HAL_NVIC_EnableIRQ(InterruptRoutine);
 }
-
+GPIO_PinState Button::read(ButtonID button){
+	switch(button){
+	case Button_1:
+		return HAL_GPIO_ReadPin(BUTTON_1_PORT,BUTTON_1_PIN);
+		break;
+	case Button_2:
+		return HAL_GPIO_ReadPin(BUTTON_2_PORT,BUTTON_2_PIN);
+		break;
+	default:
+		return GPIO_PIN_RESET;
+	}
+}
 void EXTI0_1_IRQHandler(void)
 {
 Button::Disable(BUTTON_1_ITn);

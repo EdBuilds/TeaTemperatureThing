@@ -18,7 +18,7 @@ class StateMachine {
     public:
 	 static RealTimeClock AlarmClock;
 
-	void Init();
+	void Init(bool WakeupRun);
 	void Update();
     private:
 	static etl::queue<Signal,20> SignalContainer;

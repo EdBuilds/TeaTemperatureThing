@@ -19,14 +19,29 @@
  Thermometer StateMachine::thermometer;
  Display  StateMachine::display;
  etl::queue<Signal,20> StateMachine::SignalContainer;
-void StateMachine::Init(){
+void StateMachine::Init(bool WakeupRun){
 	CurrentState=&Standby_state;
 	AlarmClock.Init(&SetNextSignal);
 	//AlarmClock.AlarmA.set(0,0,8);
 	Buttons.Init(&SetNextSignal);
+	display.Print("bb");
+	if(WakeupRun){ //the mcu has been woken up from standby,
+		//and the button down callback needs to be called manually
+	display.Print("aa");
+		//detect which button has been pressed
+	if(Buttons.read(Button_1)==GPIO_PIN_SET){
+		SetNextSignal(SIG_BUTTON_1_DN);
+	}else if(Buttons.read(Button_2)==GPIO_PIN_SET){
+		SetNextSignal(SIG_BUTTON_2_DN);
+	}else{
+		//this happens only when the button has been released before the readout.
+		//In this case Currently I'm going to ignore it.
+	}
+
+	}
 	display.Init();
 	display.Enable();
-	display.Print("aa");
+
 }
 
 
