@@ -6,7 +6,7 @@
  */
 
 #include <Thermometer_driver.hpp>
-
+#include "ErrorHandler.hpp"
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx.h"
 #include "stm32l0xx_hal_tim.h"
@@ -42,7 +42,7 @@ Thermometer::Thermometer(): ReferenceEnable(THERMOMETER_REFERENCE_PIN,THERMOMETE
 
 	    if (HAL_ADC_ConfigChannel(&AdcHandle, &AdcChannel) != HAL_OK)
 	    {
-	        asm("bkpt 255");
+	    	ErrorFatal(__FILE__, __LINE__);
 	    }
 	    //Initialize reference pin
 	   //ReferenceEnable.reset();

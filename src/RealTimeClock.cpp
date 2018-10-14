@@ -6,6 +6,7 @@
  */
 
 #include <RealTimeClock.hpp>
+#include "ErrorHandler.hpp"
 #include "stm32l0xx.h"
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx_hal_rtc.h"
@@ -40,7 +41,7 @@ void RealTimeClock::Init(SignalCallback AlarmCallback){
 	  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
 	  if (HAL_RTC_Init(&hrtc) != HAL_OK)
 	  {
-	  //  _Error_Handler(__FILE__, __LINE__);
+	    	ErrorFatal(__FILE__, __LINE__);
 	  }
 
 	  sTime.Hours = 0x0;
@@ -50,7 +51,7 @@ void RealTimeClock::Init(SignalCallback AlarmCallback){
 	  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
 	  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
 	  {
-	   // _Error_Handler(__FILE__, __LINE__);
+	    	ErrorFatal(__FILE__, __LINE__);
 	  }
 	  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
 	  sDate.Month = RTC_MONTH_JANUARY;
@@ -59,7 +60,7 @@ void RealTimeClock::Init(SignalCallback AlarmCallback){
 
 	  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
 	  {
-	   // _Error_Handler(__FILE__, __LINE__);
+	    	ErrorFatal(__FILE__, __LINE__);
 	  }
 	  HAL_NVIC_EnableIRQ(RTC_IRQn);
 
@@ -89,7 +90,7 @@ void Alarm::set(uint8_t hours, uint8_t minutes, uint8_t seconds){
 
 	if (HAL_RTC_SetAlarm_IT(&RealTimeClock::hrtc, &sAlarm, RTC_FORMAT_BIN) != HAL_OK)
 	{
-	  //_Error_Handler(__FILE__, __LINE__);
+	    	ErrorFatal(__FILE__, __LINE__);
 	}
 }
 void Alarm::deactivate(){

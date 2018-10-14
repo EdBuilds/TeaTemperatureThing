@@ -7,14 +7,18 @@
 #include "StateMachine.hpp"
 #include "stm32l0xx.h"
 #include "pinout_definitions.hpp"
+#include <string>
+#include "stm32l0xx_hal.h"
+#include "stm32l0xx.h"
+#include "stm32l0xx_nucleo_32.h"
+
  RealTimeClock StateMachine::AlarmClock;
- State StateMachine::CurrentState;
+ State StateMachine::CurrentState=&Standby_state;
  Signal StateMachine::NextSignal;
  Button StateMachine::Buttons;
  Thermometer StateMachine::thermometer;
  Display  StateMachine::display;
 void StateMachine::Init(){
-	transition(&Standby_state);
 	AlarmClock.Init(&SetNextSignal);
 	//AlarmClock.AlarmA.set(0,0,8);
 	Buttons.Init(&SetNextSignal);
@@ -25,6 +29,8 @@ void StateMachine::Init(){
 
 void StateMachine::Update(){
 if(NextSignal==SIG_NONE){
+
+		    HAL_Delay(100);
 	return;
 }
 //Debouncing the buttons by using a small delay, and then reenabling the interrupt routines
@@ -47,9 +53,6 @@ CurrentState(temporarySignal);
 	 NextSignal=s;
  }
 
-
-
-
  void StateMachine::transition(State NewState){
 	 if(CurrentState!=NULL){
 		 CurrentState(SIG_EXIT);
@@ -59,9 +62,22 @@ CurrentState(SIG_ENTRY);
  }
 
 void StateMachine::Standby_state(Signal s){
+volatile uint16_t measurement;
+volatile uint16_t temp;
 	switch(s){
+
 	case SIG_ENTRY:
+		HAL_PWR_EnterSTANDBYMode();
 		display.Print("sb");
+		//AlarmClock.AlarmA.set(0,0,2);
+		break;
+	case SIG_ALARM_A:
+		//AlarmClock.AlarmA.set(0,0,1);
+		measurement=thermometer.measure();
+		temp=(measurement-1228)*100/(1544-1228);
+		char buffer[20];
+		itoa(temp,buffer,10);   // here 2 means binary
+	    display.Print(buffer);
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
