@@ -17,6 +17,7 @@
  Signal StateMachine::NextSignal;
  Button StateMachine::Buttons;
  Thermometer StateMachine::thermometer;
+ Buzzer StateMachine::buzzer;
  Display  StateMachine::display;
  etl::queue<Signal,20> StateMachine::SignalContainer;
 void StateMachine::Init(bool WakeupRun){
@@ -39,6 +40,8 @@ void StateMachine::Init(bool WakeupRun){
 	}
 
 	}
+	buzzer.Init();
+	buzzer.start();
 	display.Init();
 	display.Enable();
 
@@ -47,6 +50,10 @@ void StateMachine::Init(bool WakeupRun){
 
 void StateMachine::Update(){
 if(	SignalContainer.empty()){
+	//there is nothing to do currently, entering stop mode
+	 //HAL_SuspendTick();
+	//HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI);
+	 //HAL_ResumeTick();
 	return;
 }
 Signal NextSignal=SignalContainer.front();
@@ -141,7 +148,6 @@ switch(s){
 void StateMachine::ButtonDown_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
-		display.Print("bd");
 		AlarmClock.AlarmA.set(0,0,2);
 		break;
 	case SIG_ALARM_A: //the button is being pushed down for more than a 2 secs
@@ -164,45 +170,64 @@ switch(s){
 }
 void StateMachine::Warming_state(Signal s){
 switch(s){
+uint16_t measurement;
+	case SIG_ENTRY:
+		AlarmClock.AlarmB.set(0,2,0);
+		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		if(measurement>65+3){
+			transition(Cooling_state);
+		}else{
+			AlarmClock.AlarmA.set(0,0,2);
+		}
+		break;
 	case SIG_ALARM_A:
-
+		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		if(measurement>65+3){
+			transition(Cooling_state);
+		}else{
+			AlarmClock.AlarmA.set(0,0,2);
+		}
 		break;
 	case SIG_ALARM_B:
-
+		transition(Standby_state);
 		break;
 	case SIG_BUTTON_1_DN:
-
-		break;
-	case SIG_BUTTON_1_UP:
-
-		break;
 	case SIG_BUTTON_2_DN:
-
+		transition(BattCheck_state);
 		break;
 	case SIG_BUTTON_2_UP:
-
+	case SIG_BUTTON_1_UP:
 		break;
 }
 }
 void StateMachine::Cooling_state(Signal s){
 switch(s){
+uint16_t measurement;
+	case SIG_ENTRY:
+		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		if(measurement<65){
+			transition(Alarm_state);
+		}else{
+			AlarmClock.AlarmA.set(0,0,2);
+		}
+		break;
 	case SIG_ALARM_A:
-
+		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		if(measurement<65){
+			transition(Alarm_state);
+		}else{
+			AlarmClock.AlarmA.set(0,0,2);
+		}
 		break;
 	case SIG_ALARM_B:
-
+		transition(Standby_state);
 		break;
 	case SIG_BUTTON_1_DN:
-
-		break;
-	case SIG_BUTTON_1_UP:
-
-		break;
 	case SIG_BUTTON_2_DN:
-
+		transition(BattCheck_state);
 		break;
 	case SIG_BUTTON_2_UP:
-
+	case SIG_BUTTON_1_UP:
 		break;
 }
 }

@@ -5,6 +5,7 @@
  *      Author: tamas
  */
 #include "Buzzer_driver.hpp"
+#include "ErrorHandler.hpp"
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx_hal_tim.h"
 #include "stm32l0xx_hal_gpio.h"
@@ -18,17 +19,14 @@ void _Error_Handler(char *file, int line)
   {
   }
 }
-void Buzzer::init_timer(){
-
+void Buzzer::Init(){
 	  TIM_MasterConfigTypeDef sMasterConfig;
 	    __HAL_RCC_TIM2_CLK_ENABLE();
-
-	  __HAL_RCC_GPIOA_CLK_ENABLE();
 	  GPIO_InitTypeDef GPIO_InitStruct;
 	  GPIO_InitStruct.Pin = BUZZER_GPIO_PIN;
 	  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	  GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
 	  HAL_GPIO_Init(BUZZER_GPIO_PORT, &GPIO_InitStruct);
 
@@ -58,18 +56,20 @@ void Buzzer::init_timer(){
 	  {
 	    _Error_Handler(__FILE__, __LINE__);
 	  }
-	  HAL_TIM_PWM_Start(&htim2, BUZZER_TIMER_CHANNEL);
-
 
 isRunning=false;
 
 }
 void Buzzer::start(){
-	HAL_TIM_PWM_Start(&htim2, BUZZER_TIMER_CHANNEL);
+	if(HAL_TIM_PWM_Start(&htim2, BUZZER_TIMER_CHANNEL)!= HAL_OK){
+		ErrorFatal(__FILE__, __LINE__);
+	}
 	isRunning=true;
 }
 void Buzzer::stop(){
-	HAL_TIM_PWM_Stop(&htim2, BUZZER_TIMER_CHANNEL);
+	if(HAL_TIM_PWM_Stop(&htim2, BUZZER_TIMER_CHANNEL)!= HAL_OK){
+		ErrorFatal(__FILE__, __LINE__);
+	}
 	isRunning=false;
 }
 void Buzzer::setFrequency(uint16_t setFreq){

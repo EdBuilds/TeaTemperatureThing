@@ -17,7 +17,7 @@ public:
 TIM_HandleTypeDef htim2;
 TIM_OC_InitTypeDef sConfigOC;
 bool isRunning;
-void init_timer();
+void Init();
 void start();
 void setFrequency(uint16_t setFreq);
 void stop();
