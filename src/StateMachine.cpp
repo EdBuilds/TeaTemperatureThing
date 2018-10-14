@@ -19,11 +19,13 @@
  Thermometer StateMachine::thermometer;
  Display  StateMachine::display;
 void StateMachine::Init(){
+	CurrentState=&Standby_state;
 	AlarmClock.Init(&SetNextSignal);
 	//AlarmClock.AlarmA.set(0,0,8);
 	Buttons.Init(&SetNextSignal);
 	display.Init();
 	display.Enable();
+	display.Print("aa");
 }
 
 
@@ -67,9 +69,18 @@ volatile uint16_t temp;
 	switch(s){
 
 	case SIG_ENTRY:
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN2);
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN3);
+		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+		 /* Disable GPIOs clock */
+		 __HAL_RCC_GPIOA_CLK_DISABLE();
+		 __HAL_RCC_GPIOB_CLK_DISABLE();
+		 /* Enter Stop Mode */
+		 HAL_SuspendTick();
+		 HAL_RCC_DeInit();
+		 HAL_DeInit();
 		HAL_PWR_EnterSTANDBYMode();
-		display.Print("sb");
-		//AlarmClock.AlarmA.set(0,0,2);
 		break;
 	case SIG_ALARM_A:
 		//AlarmClock.AlarmA.set(0,0,1);
@@ -89,9 +100,10 @@ void StateMachine::BattCheck_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
 		display.Print("bc");
+		AlarmClock.AlarmA.set(0,0,4);
 		break;
 	case SIG_ALARM_A:
-
+		transition(Standby_state);
 		break;
 	case SIG_ALARM_B:
 

@@ -92,11 +92,21 @@ void SystemClock_Config(void)
 
 	  /* SysTick_IRQn interrupt configuration */
 	  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+
+
 }
 
  void SystemPower_Config(void)
  {
    __HAL_RCC_PWR_CLK_ENABLE();
+	  __HAL_RCC_GPIOA_CLK_ENABLE();
+	  __HAL_RCC_GPIOB_CLK_ENABLE();
+	  __GPIOA_CLK_ENABLE();
+	  __GPIOB_CLK_ENABLE();
    //HAL_PWREx_EnableUltraLowPower();
    //HAL_PWREx_EnableLowPowerRunMode();
+	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1);
+	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN2);
+	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN3);
+
  }
