@@ -12,6 +12,7 @@
 #include "Button_driver.hpp"
 #include "Thermometer_driver.hpp"
 #include "display_driver.hpp"
+#include "etl/queue.h"
 typedef void(*State)(Signal);
 class StateMachine {
     public:
@@ -20,6 +21,7 @@ class StateMachine {
 	void Init();
 	void Update();
     private:
+	static etl::queue<Signal,20> SignalContainer;
 	static Thermometer thermometer;
 	static Display display;
 	static State CurrentState;

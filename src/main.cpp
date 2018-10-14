@@ -19,12 +19,14 @@
 #include "StateMachine.hpp"
 #include "Button_driver.hpp"
 #include "Thermometer_driver.hpp"
+#include "etl/queue.h"
+
 void SystemClock_Config(void);
 void SystemPower_Config(void);
-void _Error_Handler(char *file, int line);
 RealTimeClock alarm;
 int main(void)
 {
+
 HAL_Init();
 SystemClock_Config();
 SystemPower_Config();

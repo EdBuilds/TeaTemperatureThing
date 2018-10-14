@@ -18,6 +18,7 @@
  Button StateMachine::Buttons;
  Thermometer StateMachine::thermometer;
  Display  StateMachine::display;
+ etl::queue<Signal,20> StateMachine::SignalContainer;
 void StateMachine::Init(){
 	CurrentState=&Standby_state;
 	AlarmClock.Init(&SetNextSignal);
@@ -30,11 +31,11 @@ void StateMachine::Init(){
 
 
 void StateMachine::Update(){
-if(NextSignal==SIG_NONE){
-
-		    HAL_Delay(100);
+if(	SignalContainer.empty()){
 	return;
 }
+Signal NextSignal=SignalContainer.front();
+
 //Debouncing the buttons by using a small delay, and then reenabling the interrupt routines
 //It would be much cleaner to use a timer for this, but Im getting fed up with these buttons.
 if(NextSignal==SIG_BUTTON_1_UP||NextSignal==SIG_BUTTON_1_DN){
@@ -47,12 +48,12 @@ if(NextSignal==SIG_BUTTON_1_UP||NextSignal==SIG_BUTTON_1_DN){
 //a temporary signal container needs to be created here to be able to set the NextSignal to NONE,
 //because the handling of the current state can take a long time, and if an interrupt sets the signal, it would be owerwritten.
 //
-Signal temporarySignal=NextSignal;
-NextSignal=SIG_NONE;
-CurrentState(temporarySignal);
+
+CurrentState(NextSignal);
+SignalContainer.pop();
 }
  void StateMachine::SetNextSignal(Signal s){
-	 NextSignal=s;
+	 SignalContainer.push(s);
  }
 
  void StateMachine::transition(State NewState){
