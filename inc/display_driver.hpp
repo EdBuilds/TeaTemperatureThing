@@ -30,10 +30,10 @@ class Display {
 		segmentBlock(uint16_t * segmentPins, GPIO_TypeDef ** segmentPorts,
 				uint16_t enablePin, GPIO_TypeDef * enablePort);
 	};
-	static segmentBlock Blocks[CONNECTED_BLOCKS];
 	static int activeBlock;
 public:
 	static TIM_HandleTypeDef htim21;
+	static segmentBlock Blocks[CONNECTED_BLOCKS];
 	void Init();
 	Display();
 	static void TimerCallback();

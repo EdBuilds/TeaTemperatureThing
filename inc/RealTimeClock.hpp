@@ -24,7 +24,7 @@ public:
 	,AlarmCallback(alarmXCallback){}
 	Alarm(){}
 void deactivate();
-void set(uint8_t hours, uint8_t minutes, uint8_t seconds);
+void set(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t subSeconds);
 };
 
 class RealTimeClock{

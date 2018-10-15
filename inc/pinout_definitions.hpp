@@ -9,7 +9,7 @@
 #define PINOUT_DEFINITIONS_HPP_
 #include "stm32l0xx.h"
 //Buzzer pin definitions
-#define BUZZER_TIMER_CHANNEL TIM_CHANNEL_1
+#define BUZZER_TIMER_CHANNEL TIM_CHANNEL_4
 #define BUZZER_TIMER TIM2
 #define BUZZER_GPIO_PORT GPIOA
 #define BUZZER_GPIO_PIN GPIO_PIN_3

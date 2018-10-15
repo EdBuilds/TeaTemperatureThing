@@ -23,12 +23,15 @@
 void StateMachine::Init(bool WakeupRun){
 	CurrentState=&Standby_state;
 	AlarmClock.Init(&SetNextSignal);
-	//AlarmClock.AlarmA.set(0,0,8);
 	Buttons.Init(&SetNextSignal);
-	display.Print("bb");
+	buzzer.Init();
+	buzzer.start();
+	display.Init();
+	display.Print("aa");
+	//AlarmClock.AlarmA.set(0,0,0,10);
+	//display.Enable();
 	if(WakeupRun){ //the mcu has been woken up from standby,
 		//and the button down callback needs to be called manually
-	display.Print("aa");
 		//detect which button has been pressed
 	if(Buttons.read(Button_1)==GPIO_PIN_SET){
 		SetNextSignal(SIG_BUTTON_1_DN);
@@ -40,10 +43,9 @@ void StateMachine::Init(bool WakeupRun){
 	}
 
 	}
-	buzzer.Init();
-	buzzer.start();
-	display.Init();
-	display.Enable();
+
+
+
 
 }
 
@@ -106,16 +108,20 @@ volatile uint16_t temp;
 		HAL_PWR_EnterSTANDBYMode();
 		break;
 	case SIG_ALARM_A:
+		//display.Disable();
 		//AlarmClock.AlarmA.set(0,0,1);
-		measurement=thermometer.measure();
-		temp=(measurement-1228)*100/(1544-1228);
-		char buffer[20];
-		itoa(temp,buffer,10);   // here 2 means binary
-	    display.Print(buffer);
+		//measurement=thermometer.measure();
+		//temp=(measurement-1228)*100/(1544-1228);
+		//char buffer[20];
+		//itoa(temp,buffer,10);   // here 2 means binary
+	    //display.Print(buffer);
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
-		transition(ButtonDown_state);
+		//display.Enable();
+		AlarmClock.AlarmA.set(0,0,0,2);
+
+		//transition(ButtonDown_state);
 		break;
 	}
 }
@@ -123,7 +129,7 @@ void StateMachine::BattCheck_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
 		display.Print("bc");
-		AlarmClock.AlarmA.set(0,0,4);
+		AlarmClock.AlarmA.set(0,0,4,0);
 		break;
 	case SIG_ALARM_A:
 		transition(Standby_state);
@@ -148,7 +154,7 @@ switch(s){
 void StateMachine::ButtonDown_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
-		AlarmClock.AlarmA.set(0,0,2);
+		AlarmClock.AlarmA.set(0,0,2,0);
 		break;
 	case SIG_ALARM_A: //the button is being pushed down for more than a 2 secs
 		transition(TemperatureSet_state);
@@ -172,12 +178,12 @@ void StateMachine::Warming_state(Signal s){
 switch(s){
 uint16_t measurement;
 	case SIG_ENTRY:
-		AlarmClock.AlarmB.set(0,2,0);
+		AlarmClock.AlarmB.set(0,2,0,0);
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
 		if(measurement>65+3){
 			transition(Cooling_state);
 		}else{
-			AlarmClock.AlarmA.set(0,0,2);
+			AlarmClock.AlarmA.set(0,0,2,0);
 		}
 		break;
 	case SIG_ALARM_A:
@@ -185,7 +191,7 @@ uint16_t measurement;
 		if(measurement>65+3){
 			transition(Cooling_state);
 		}else{
-			AlarmClock.AlarmA.set(0,0,2);
+			AlarmClock.AlarmA.set(0,0,2,0);
 		}
 		break;
 	case SIG_ALARM_B:
@@ -208,7 +214,7 @@ uint16_t measurement;
 		if(measurement<65){
 			transition(Alarm_state);
 		}else{
-			AlarmClock.AlarmA.set(0,0,2);
+			AlarmClock.AlarmA.set(0,0,2,0);
 		}
 		break;
 	case SIG_ALARM_A:
@@ -216,7 +222,7 @@ uint16_t measurement;
 		if(measurement<65){
 			transition(Alarm_state);
 		}else{
-			AlarmClock.AlarmA.set(0,0,2);
+			AlarmClock.AlarmA.set(0,0,2,0);
 		}
 		break;
 	case SIG_ALARM_B:
