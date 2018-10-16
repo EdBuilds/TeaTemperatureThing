@@ -31,6 +31,7 @@ class Display {
 				uint16_t enablePin, GPIO_TypeDef * enablePort);
 	};
 	static int activeBlock;
+	char buffer[5];
 public:
 	static TIM_HandleTypeDef htim21;
 	static segmentBlock Blocks[CONNECTED_BLOCKS];
@@ -39,6 +40,7 @@ public:
 	static void TimerCallback();
 //I know this is a terrible varable naming, I take any suggestions
 	void Print(char* stringToPrint);
+	void Print(int8_t numberToPrint);
 	void Clear();
 	void Enable();
 	void Disable();

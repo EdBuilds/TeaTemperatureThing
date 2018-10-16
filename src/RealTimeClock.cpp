@@ -100,7 +100,6 @@ void Alarm::set(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t subSec
 	{
 	    	ErrorFatal(__FILE__, __LINE__);
 	}
-	Display::Blocks[0].on();
 }
 void Alarm::deactivate(){
 	HAL_RTC_DeactivateAlarm(&RealTimeClock::hrtc,sAlarm.Alarm);
@@ -108,7 +107,6 @@ void Alarm::deactivate(){
 
 void RTC_IRQHandler(void)
 {
-	 Display::Blocks[0].off();
   HAL_RTC_AlarmIRQHandler(&RealTimeClock::hrtc);
 
 }

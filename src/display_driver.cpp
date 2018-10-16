@@ -8,6 +8,7 @@
 #include "stm32l011xx.h"
 #include "stm32l0xx_it.h"
 #include "stm32l0xx_hal.h"
+#include "stdlib.h"
 #define ASCII_OFFSET 32
 TIM_HandleTypeDef Display::htim21;
 int Display::activeBlock=0;
@@ -56,6 +57,11 @@ void Display::Print(char* stringToPrint){
 		Blocks[i].setAsbinary(SevenSegmentASCII[uint8_t(stringToPrint[i])-ASCII_OFFSET]);
 		//Blocks[i].update();
 	}
+}
+void Display::Print(int8_t numberToPrint){
+	  itoa(numberToPrint,buffer,10);
+	  Print(buffer);
+
 }
 void Display::Clear(){
 for(int i=0; i<CONNECTED_BLOCKS; i++){

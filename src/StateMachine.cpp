@@ -19,6 +19,7 @@
  Thermometer StateMachine::thermometer;
  Buzzer StateMachine::buzzer;
  Display  StateMachine::display;
+ PersistentStorage StateMachine::eeprom;
  etl::queue<Signal,20> StateMachine::SignalContainer;
 void StateMachine::Init(bool WakeupRun){
 	CurrentState=&Standby_state;
@@ -26,6 +27,8 @@ void StateMachine::Init(bool WakeupRun){
 	Buttons.Init(&SetNextSignal);
 	buzzer.Init();
 	buzzer.start();
+	eeprom.readSetpoint();
+	eeprom.readCalibration();
 	display.Init();
 	display.Print("aa");
 	//AlarmClock.AlarmA.set(0,0,0,10);
@@ -89,8 +92,6 @@ CurrentState(SIG_ENTRY);
  }
 
 void StateMachine::Standby_state(Signal s){
-volatile uint16_t measurement;
-volatile uint16_t temp;
 	switch(s){
 
 	case SIG_ENTRY:
@@ -108,52 +109,36 @@ volatile uint16_t temp;
 		HAL_PWR_EnterSTANDBYMode();
 		break;
 	case SIG_ALARM_A:
-		//display.Disable();
-		//AlarmClock.AlarmA.set(0,0,1);
-		//measurement=thermometer.measure();
-		//temp=(measurement-1228)*100/(1544-1228);
-		//char buffer[20];
-		//itoa(temp,buffer,10);   // here 2 means binary
-	    //display.Print(buffer);
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
-		//display.Enable();
-		AlarmClock.AlarmA.set(0,0,0,2);
-
-		//transition(ButtonDown_state);
+		transition(ButtonDown_state);
 		break;
 	}
 }
 void StateMachine::BattCheck_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
+		AlarmClock.AlarmB.deactivate();
 		display.Print("bc");
-		AlarmClock.AlarmA.set(0,0,4,0);
+		AlarmClock.AlarmA.set(0,0,1,0);
 		break;
 	case SIG_ALARM_A:
-		transition(Standby_state);
+		transition(Warming_state);
 		break;
 	case SIG_ALARM_B:
 
 		break;
 	case SIG_BUTTON_1_DN:
-
-		break;
-	case SIG_BUTTON_1_UP:
-
-		break;
 	case SIG_BUTTON_2_DN:
-
-		break;
-	case SIG_BUTTON_2_UP:
-
+		transition(ButtonDown_state);
 		break;
 }
 }
 void StateMachine::ButtonDown_state(Signal s){
 switch(s){
 	case SIG_ENTRY:
+		AlarmClock.AlarmA.deactivate();
 		AlarmClock.AlarmA.set(0,0,2,0);
 		break;
 	case SIG_ALARM_A: //the button is being pushed down for more than a 2 secs
@@ -176,10 +161,12 @@ switch(s){
 }
 void StateMachine::Warming_state(Signal s){
 switch(s){
-uint16_t measurement;
+int16_t measurement;
 	case SIG_ENTRY:
+		display.Enable();
 		AlarmClock.AlarmB.set(0,2,0,0);
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		display.Print(measurement);
 		if(measurement>65+3){
 			transition(Cooling_state);
 		}else{
@@ -188,6 +175,7 @@ uint16_t measurement;
 		break;
 	case SIG_ALARM_A:
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		display.Print(measurement);
 		if(measurement>65+3){
 			transition(Cooling_state);
 		}else{
@@ -199,7 +187,7 @@ uint16_t measurement;
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
-		transition(BattCheck_state);
+		transition(ButtonDown_state);
 		break;
 	case SIG_BUTTON_2_UP:
 	case SIG_BUTTON_1_UP:
@@ -211,6 +199,7 @@ switch(s){
 uint16_t measurement;
 	case SIG_ENTRY:
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		display.Print(measurement);
 		if(measurement<65){
 			transition(Alarm_state);
 		}else{
@@ -219,6 +208,7 @@ uint16_t measurement;
 		break;
 	case SIG_ALARM_A:
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
+		display.Print(measurement);
 		if(measurement<65){
 			transition(Alarm_state);
 		}else{
@@ -230,7 +220,7 @@ uint16_t measurement;
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
-		transition(BattCheck_state);
+		transition(ButtonDown_state);
 		break;
 	case SIG_BUTTON_2_UP:
 	case SIG_BUTTON_1_UP:
@@ -260,27 +250,59 @@ switch(s){
 }
 }
 void StateMachine::TemperatureSet_state(Signal s){
+static bool DisplayOn=true;
 switch(s){
 	case SIG_ENTRY:
-display.Print("ts");
+AlarmClock.AlarmA.deactivate();
+AlarmClock.AlarmB.deactivate();
+AlarmClock.AlarmB.set(0,0,5,0);
+AlarmClock.AlarmA.set(0,0,0,128);
+
+display.Print(eeprom.SetpointData.Value);
+DisplayOn=true;
+display.Enable();
 		break;
 	case SIG_ALARM_A:
-
+		if(DisplayOn){
+			display.Disable();
+			DisplayOn=false;
+		}else{
+			display.Enable();
+			DisplayOn=true;
+		}
+AlarmClock.AlarmA.set(0,0,0,128);
 		break;
 	case SIG_ALARM_B:
-
-		break;
-	case SIG_BUTTON_1_DN:
-
+		transition(BattCheck_state);
 		break;
 	case SIG_BUTTON_1_UP:
+AlarmClock.AlarmA.deactivate();
+AlarmClock.AlarmB.deactivate();
 
-		break;
-	case SIG_BUTTON_2_DN:
-
+eeprom.SetpointData.Value+=1;
+eeprom.writeSetpoint();
+display.Print(eeprom.SetpointData.Value);
+DisplayOn=true;
+display.Enable();
+AlarmClock.AlarmA.set(0,0,0,128);
+AlarmClock.AlarmB.set(0,0,5,0);
 		break;
 	case SIG_BUTTON_2_UP:
+AlarmClock.AlarmA.deactivate();
+AlarmClock.AlarmB.deactivate();
 
+eeprom.SetpointData.Value-=1;
+eeprom.writeSetpoint();
+display.Print(eeprom.SetpointData.Value);
+DisplayOn=true;
+display.Enable();
+AlarmClock.AlarmA.set(0,0,0,128);
+
+AlarmClock.AlarmB.set(0,0,5,0);
+		break;
+	case SIG_EXIT:
+AlarmClock.AlarmA.deactivate();
+AlarmClock.AlarmB.deactivate();
 		break;
 }
 }

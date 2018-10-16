@@ -56,8 +56,8 @@ void Buzzer::Init(){
 	  {
 	    _Error_Handler(__FILE__, __LINE__);
 	  }
-
 isRunning=false;
+
 
 }
 void Buzzer::start(){

@@ -13,7 +13,9 @@
 #include "Thermometer_driver.hpp"
 #include "display_driver.hpp"
 #include "Buzzer_driver.hpp"
+#include "Persistent_storage.hpp"
 #include "etl/queue.h"
+#define STATE_BTNDN_DELAY 2
 typedef void(*State)(Signal);
 class StateMachine {
     public:
@@ -26,6 +28,7 @@ class StateMachine {
 	static Thermometer thermometer;
 	static Display display;
 	static Buzzer buzzer;
+	static PersistentStorage eeprom;
 	static State CurrentState;
 	static Signal NextSignal;
 	static void SetNextSignal(Signal s);
