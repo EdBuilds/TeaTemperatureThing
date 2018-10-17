@@ -11,7 +11,7 @@
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx.h"
 #include "stm32l0xx_nucleo_32.h"
-
+#include "Tunes.hpp"
  RealTimeClock StateMachine::AlarmClock;
  State StateMachine::CurrentState=&Standby_state;
  Signal StateMachine::NextSignal;
@@ -24,12 +24,10 @@ const EepromItem<setpointData> StateMachine::Setpoint;
 
  etl::queue<Signal,20> StateMachine::SignalContainer;
 void StateMachine::Init(bool WakeupRun){
-		FLASH->SR;
 		CurrentState=&Standby_state;
 	AlarmClock.Init(&SetNextSignal);
 	Buttons.Init(&SetNextSignal);
 	buzzer.Init();
-	buzzer.start();
 	display.Init();
 	display.Print("aa");
 	//AlarmClock.AlarmA.set(0,0,0,10);
@@ -165,10 +163,10 @@ switch(s){
 int16_t measurement;
 	case SIG_ENTRY:
 		display.Enable();
-		AlarmClock.AlarmB.set(0,2,0,0);
+		AlarmClock.AlarmB.set(0,CYCLE_TIMEOUT,0,0);
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
 		display.Print(measurement);
-		if(measurement>65+3){
+		if(measurement>Setpoint.Read()+3){
 			transition(Cooling_state);
 		}else{
 			AlarmClock.AlarmA.set(0,0,2,0);
@@ -177,7 +175,7 @@ int16_t measurement;
 	case SIG_ALARM_A:
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
 		display.Print(measurement);
-		if(measurement>65+3){
+		if(measurement>Setpoint.Read()+3){
 			transition(Cooling_state);
 		}else{
 			AlarmClock.AlarmA.set(0,0,2,0);
@@ -201,7 +199,7 @@ uint16_t measurement;
 	case SIG_ENTRY:
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
 		display.Print(measurement);
-		if(measurement<65){
+		if(measurement<Setpoint.Read()){
 			transition(Alarm_state);
 		}else{
 			AlarmClock.AlarmA.set(0,0,2,0);
@@ -210,7 +208,7 @@ uint16_t measurement;
 	case SIG_ALARM_A:
 		measurement=(thermometer.measure()-1228)*100/(1544-1228);
 		display.Print(measurement);
-		if(measurement<65){
+		if(measurement<Setpoint.Read()){
 			transition(Alarm_state);
 		}else{
 			AlarmClock.AlarmA.set(0,0,2,0);
@@ -229,24 +227,39 @@ uint16_t measurement;
 }
 }
 void StateMachine::Alarm_state(Signal s){
+static int TuneIndex;
 switch(s){
+	case SIG_ENTRY:
+		TuneIndex=0;
+		AlarmClock.AlarmB.deactivate();
+		AlarmClock.AlarmA.deactivate();
+		AlarmClock.AlarmA.set(0,0,0,100);
+		break;
 	case SIG_ALARM_A:
-
-		break;
-	case SIG_ALARM_B:
-
-		break;
-	case SIG_BUTTON_1_DN:
-
+		if(TuneIndex>=BasicTune.size()-1){
+			transition(Standby_state);
+			return;
+		}
+		AlarmClock.AlarmA.set(0,
+				BasicTune[TuneIndex].minutes,
+				BasicTune[TuneIndex].seconds,
+				BasicTune[TuneIndex].subseconds);
+		if(BasicTune[TuneIndex].running){
+			buzzer.setFrequency(BasicTune[TuneIndex].frequecy);
+			buzzer.start();
+		}else{
+			buzzer.stop();
+		}
+		TuneIndex++;
 		break;
 	case SIG_BUTTON_1_UP:
-
-		break;
-	case SIG_BUTTON_2_DN:
-
-		break;
 	case SIG_BUTTON_2_UP:
-
+			transition(Standby_state);
+		break;
+	case SIG_EXIT:
+		AlarmClock.AlarmA.deactivate();
+		AlarmClock.AlarmB.deactivate();
+			buzzer.stop();
 		break;
 }
 }

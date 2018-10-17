@@ -16,6 +16,7 @@
 #include "Persistent_storage.hpp"
 #include "etl/queue.h"
 #define STATE_BTNDN_DELAY 2
+#define CYCLE_TIMEOUT 20
 typedef void(*State)(Signal);
 class StateMachine {
     public:
@@ -28,6 +29,7 @@ class StateMachine {
 	static const EepromItem<setpointData> Setpoint;
 	static const EepromItem<calibrationData> CalibrationData;
 	static etl::queue<Signal,20> SignalContainer;
+	//static etl::vector<Note,7>::iterator TuneIterator;
 	static Thermometer thermometer;
 	static Display display;
 	static Buzzer buzzer;
