@@ -12,7 +12,7 @@
 //because I didn't know whether I wanted to use flash, or EEPROM for this.
 
 
-#define EEPROM_BASE_ADDRESS 0x08080000
+#define EEPROM_BASE_ADDRESS 0x08080010
 #define EEPROM_HEADER_ADDRESS (EEPROM_BASE_ADDRESS+0x0)
 #define EEPROM_CALIBRATION_ADDRESS (EEPROM_BASE_ADDRESS+sizeof(HeaderData))
 #define EEPROM_SETPOINT_ADDRESS (EEPROM_BASE_ADDRESS+sizeof(HeaderData)+sizeof(calibrationData))
@@ -40,31 +40,7 @@ class EepromItem{
 EepromItem();
 uint32_t size() const;
 T Read() const;
-void Write(T value) const;
+void Write(const T &value) const;
 };
-class PersistentStorage{
-	int _x;
-
-public:
-	const EepromItem<HeaderData> ddd;
-	calibrationData _CalibrationData;
-	setpointData _SetpointData;
-	PersistentStorage();
-
-	void readCalibration();
-	void writeCalibration();
-	bool hasCalibrationData();
-
-	void readSetpoint();
-	void writeSetpoint();
-	bool hasSetpointData();
-
-		};
-
-		inline void PersistentStorage::readCalibration() {
-			calibrationData CalibrationBuffer =
-					*(calibrationData *) EEPROM_CALIBRATION_ADDRESS;
-			_CalibrationData = CalibrationBuffer;
-		}
 
 #endif /* PERSISTENT_STORAGE_HPP_ */

@@ -31,7 +31,6 @@ class StateMachine {
 	static Thermometer thermometer;
 	static Display display;
 	static Buzzer buzzer;
-	static PersistentStorage eeprom;
 	static State CurrentState;
 	static Signal NextSignal;
 	static void SetNextSignal(Signal s);

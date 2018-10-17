@@ -19,12 +19,13 @@
  Thermometer StateMachine::thermometer;
  Buzzer StateMachine::buzzer;
  Display  StateMachine::display;
- PersistentStorage StateMachine::eeprom;
+
 const EepromItem<setpointData> StateMachine::Setpoint;
 
  etl::queue<Signal,20> StateMachine::SignalContainer;
 void StateMachine::Init(bool WakeupRun){
-	CurrentState=&Standby_state;
+		FLASH->SR;
+		CurrentState=&Standby_state;
 	AlarmClock.Init(&SetNextSignal);
 	Buttons.Init(&SetNextSignal);
 	buzzer.Init();

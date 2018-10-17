@@ -15,7 +15,9 @@ RTC_HandleTypeDef RealTimeClock::hrtc=RTC_HandleTypeDef();
 Alarm RealTimeClock::AlarmA;
 Alarm RealTimeClock::AlarmB;
 void RealTimeClock::Init(SignalCallback AlarmCallback){
+	FLASH->SR;
 	RTC_AlarmTypeDef sAlarm;
+	__HAL_RCC_RTC_ENABLE();
 	  sAlarm.AlarmTime.SubSeconds = 0x0;
 	  sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
 	  sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_SET;
@@ -27,9 +29,8 @@ void RealTimeClock::Init(SignalCallback AlarmCallback){
 	  AlarmB=Alarm(sAlarm,AlarmCallback);
 	  sAlarm.Alarm = RTC_ALARM_A;
 	  AlarmA=Alarm(sAlarm,AlarmCallback);
-	HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_A);
-	HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_B);
-	  __HAL_RCC_RTC_ENABLE();
+
+
 	  RTC_TimeTypeDef sTime;
 	  RTC_DateTypeDef sDate;
 	  hrtc=RTC_HandleTypeDef();
@@ -65,7 +66,8 @@ void RealTimeClock::Init(SignalCallback AlarmCallback){
 	    	ErrorFatal(__FILE__, __LINE__);
 	  }
 	  HAL_NVIC_EnableIRQ(RTC_IRQn);
-
+		HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_A);
+		HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_B);
 
 }
 //Define the interrupt function here, because I want to include every aspect of the RTC in this source code

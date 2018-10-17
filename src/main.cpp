@@ -34,6 +34,7 @@ StateMachine machine;
 volatile uint8_t temp=__HAL_PWR_GET_FLAG(PWR_FLAG_WU);
 
 machine.Init(bool(temp));
+
 	for(;;){
 machine.Update();
 	}
