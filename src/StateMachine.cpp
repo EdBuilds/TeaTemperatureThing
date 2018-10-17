@@ -20,6 +20,8 @@
  Buzzer StateMachine::buzzer;
  Display  StateMachine::display;
  PersistentStorage StateMachine::eeprom;
+const EepromItem<setpointData> StateMachine::Setpoint;
+
  etl::queue<Signal,20> StateMachine::SignalContainer;
 void StateMachine::Init(bool WakeupRun){
 	CurrentState=&Standby_state;
@@ -27,8 +29,6 @@ void StateMachine::Init(bool WakeupRun){
 	Buttons.Init(&SetNextSignal);
 	buzzer.Init();
 	buzzer.start();
-	eeprom.readSetpoint();
-	eeprom.readCalibration();
 	display.Init();
 	display.Print("aa");
 	//AlarmClock.AlarmA.set(0,0,0,10);
@@ -258,7 +258,7 @@ AlarmClock.AlarmB.deactivate();
 AlarmClock.AlarmB.set(0,0,5,0);
 AlarmClock.AlarmA.set(0,0,0,128);
 
-display.Print(eeprom.SetpointData.Value);
+display.Print(Setpoint.Read());
 DisplayOn=true;
 display.Enable();
 		break;
@@ -279,9 +279,8 @@ AlarmClock.AlarmA.set(0,0,0,128);
 AlarmClock.AlarmA.deactivate();
 AlarmClock.AlarmB.deactivate();
 
-eeprom.SetpointData.Value+=1;
-eeprom.writeSetpoint();
-display.Print(eeprom.SetpointData.Value);
+Setpoint.Write(Setpoint.Read()+1);
+display.Print(Setpoint.Read());
 DisplayOn=true;
 display.Enable();
 AlarmClock.AlarmA.set(0,0,0,128);
@@ -291,9 +290,8 @@ AlarmClock.AlarmB.set(0,0,5,0);
 AlarmClock.AlarmA.deactivate();
 AlarmClock.AlarmB.deactivate();
 
-eeprom.SetpointData.Value-=1;
-eeprom.writeSetpoint();
-display.Print(eeprom.SetpointData.Value);
+Setpoint.Write(Setpoint.Read()-1);
+display.Print(Setpoint.Read());
 DisplayOn=true;
 display.Enable();
 AlarmClock.AlarmA.set(0,0,0,128);

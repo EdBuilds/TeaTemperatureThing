@@ -24,6 +24,9 @@ class StateMachine {
 	void Init(bool WakeupRun);
 	void Update();
     private:
+	static const EepromItem<HeaderData> Header;
+	static const EepromItem<setpointData> Setpoint;
+	static const EepromItem<calibrationData> CalibrationData;
 	static etl::queue<Signal,20> SignalContainer;
 	static Thermometer thermometer;
 	static Display display;

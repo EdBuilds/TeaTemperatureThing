@@ -13,36 +13,44 @@
 
 
 #define EEPROM_BASE_ADDRESS 0x08080000
-#define EEPROM_CALIBRATION_ADDRESS (EEPROM_BASE_ADDRESS+0x0)
-#define EEPROM_CALIBRATION_HEADER 0xA0
+#define EEPROM_HEADER_ADDRESS (EEPROM_BASE_ADDRESS+0x0)
+#define EEPROM_CALIBRATION_ADDRESS (EEPROM_BASE_ADDRESS+sizeof(HeaderData))
+#define EEPROM_SETPOINT_ADDRESS (EEPROM_BASE_ADDRESS+sizeof(HeaderData)+sizeof(calibrationData))
+#define EEPROM_HEADER 0xA0
 
-#define EEPROM_SETPOINT_ADDRESS (EEPROM_BASE_ADDRESS+sizeof(calibrationData))
 #define EEPROM_SETPOINT_HEADER 0xA3
+typedef uint8_t HeaderData;
 typedef struct __attribute__ ((packed)){
-	uint8_t Header;
 	uint16_t Offset;
 	uint16_t multiplier;
 }calibrationData;
+typedef uint8_t setpointData;
 
-typedef union {
-	uint8_t Serialized[sizeof(calibrationData)];
-	calibrationData Deserialized;
-}serialCalibrationData;
-typedef struct __attribute__ ((packed)){
-	uint8_t Header;
-	uint8_t Value;
-}setpointData;
 
-typedef union {
-	uint8_t Serialized[sizeof(setpointData)];
-	setpointData Deserialized;
-}serialSetpointData;
+template <class T>
+class EepromItem{
+	typedef union {
+		uint8_t Serialized[sizeof(T)];
+		T Deserialized;
+	}SerializedTemplate;
+	const uint32_t _startAddress;
+	static uint32_t _globalAddress;
 
+  public:
+EepromItem();
+uint32_t size() const;
+T Read() const;
+void Write(T value) const;
+};
 class PersistentStorage{
+	int _x;
+
 public:
+	const EepromItem<HeaderData> ddd;
+	calibrationData _CalibrationData;
+	setpointData _SetpointData;
 	PersistentStorage();
-	calibrationData CalibrationData;
-	setpointData SetpointData;
+
 	void readCalibration();
 	void writeCalibration();
 	bool hasCalibrationData();
@@ -50,6 +58,13 @@ public:
 	void readSetpoint();
 	void writeSetpoint();
 	bool hasSetpointData();
-};
+
+		};
+
+		inline void PersistentStorage::readCalibration() {
+			calibrationData CalibrationBuffer =
+					*(calibrationData *) EEPROM_CALIBRATION_ADDRESS;
+			_CalibrationData = CalibrationBuffer;
+		}
 
 #endif /* PERSISTENT_STORAGE_HPP_ */

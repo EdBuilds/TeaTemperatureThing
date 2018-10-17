@@ -6,61 +6,60 @@
  */
 #include "Persistent_storage.hpp"
 #include "stm32l0xx_hal.h"
+#include "stm32l0xx_hal_flash.h"
+#include "ErrorHandler.hpp"
+
+
+template <class T>
+uint32_t EepromItem<T>::_globalAddress=EEPROM_BASE_ADDRESS;
+template <class T>
+EepromItem<T>::EepromItem(): _startAddress(_globalAddress){
+_globalAddress+=size();
+}
+
+template <class T>
+uint32_t EepromItem<T>::size() const{
+	return sizeof(T);
+}
+template <class T>
+T EepromItem<T>::Read() const{
+	return *(T *)_startAddress;
+}
+
+template <class T>
+void EepromItem<T>::Write(T value) const{
+	SerializedTemplate EEPROM_serial_container;
+		EEPROM_serial_container.Deserialized=value;
+		HAL_FLASHEx_DATAEEPROM_DisableFixedTimeProgram();
+		if(HAL_FLASHEx_DATAEEPROM_Unlock()!=HAL_OK){//Unprotect the EEPROM to allow writing
+			ErrorFatal(__FILE__, __LINE__);
+		}
+		for (uint32_t Byte_index=0;Byte_index<size();Byte_index++){
+			//Not very c++ way of iterating, but I'm getting dangerously close to low level here
+			if(HAL_FLASHEx_DATAEEPROM_Program(TYPEPROGRAMDATA_BYTE,_startAddress+Byte_index,EEPROM_serial_container.Serialized[Byte_index])!=HAL_OK){//Unprotect the EEPROM to allow writing
+						ErrorFatal(__FILE__, __LINE__);
+					}
+		}
+		if(HAL_FLASHEx_DATAEEPROM_Lock()!=HAL_OK){// Reprotect the EEPROM
+			ErrorFatal(__FILE__, __LINE__);
+		}
+}
 
 PersistentStorage::PersistentStorage(){
+}
 
-}
-void PersistentStorage::readCalibration(){
-	calibrationData CalibrationBuffer=*(calibrationData *)EEPROM_CALIBRATION_ADDRESS;
-	CalibrationData=CalibrationBuffer;
-}
  void PersistentStorage::writeCalibration(){
-	serialCalibrationData EEPROM_serial_container;
-	EEPROM_serial_container.Deserialized=CalibrationData;
-	HAL_FLASHEx_DATAEEPROM_Unlock();  //Unprotect the EEPROM to allow writing
-	for (uint8_t Byte_index=0;Byte_index<sizeof(calibrationData);Byte_index++){
-		//Not very c++ way of iterating, but I'm getting dangerously close to low level here
-		HAL_FLASHEx_DATAEEPROM_Program(TYPEPROGRAMDATA_BYTE,
-				EEPROM_CALIBRATION_ADDRESS+Byte_index,
-				EEPROM_serial_container.Serialized[Byte_index]);
-	}
-    HAL_FLASHEx_DATAEEPROM_Lock();  // Reprotect the EEPROM
+
 
 }
 
-bool PersistentStorage::hasCalibrationData(){
-	calibrationData Calibration=*(calibrationData *)EEPROM_CALIBRATION_ADDRESS;
-	if(Calibration.Header==EEPROM_CALIBRATION_HEADER){
-		return true;
-	}
-	return false;
-}
 
 void PersistentStorage::readSetpoint(){
-	setpointData SetpointBuffer=*(setpointData *)EEPROM_SETPOINT_ADDRESS;
-	SetpointData=SetpointBuffer;
+
 }
  void PersistentStorage::writeSetpoint(){
-	serialSetpointData EEPROM_serial_container;
-	EEPROM_serial_container.Deserialized=SetpointData;
-	HAL_FLASHEx_DATAEEPROM_Unlock();  //Unprotect the EEPROM to allow writing
-	for (uint8_t Byte_index=0;Byte_index<sizeof(calibrationData);Byte_index++){
-		//Not very c++ way of iterating, but I'm getting dangerously close to low level here
-		HAL_FLASHEx_DATAEEPROM_Program(TYPEPROGRAMDATA_BYTE,
-				EEPROM_CALIBRATION_ADDRESS+Byte_index,
-				EEPROM_serial_container.Serialized[Byte_index]);
-	}
-    HAL_FLASHEx_DATAEEPROM_Lock();  // Reprotect the EEPROM
+
 
 }
-bool PersistentStorage::hasSetpointData(){
-	setpointData Setpoint=*(setpointData *)EEPROM_SETPOINT_ADDRESS;
-	if(Setpoint.Header==EEPROM_SETPOINT_HEADER){
-		return true;
-	}
-	return false;
-}
-
-
-
-
+ template class EepromItem<uint8_t>;
+ template class EepromItem<uint16_t>;
