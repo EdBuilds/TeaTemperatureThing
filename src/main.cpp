@@ -31,8 +31,7 @@ HAL_Init();
 SystemClock_Config();
 SystemPower_Config();
 StateMachine machine;
-volatile uint8_t temp=__HAL_PWR_GET_FLAG(PWR_FLAG_WU);
-
+ uint8_t temp=__HAL_PWR_GET_FLAG(PWR_FLAG_WU);
 machine.Init(bool(temp));
 
 	for(;;){

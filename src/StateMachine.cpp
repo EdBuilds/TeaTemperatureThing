@@ -123,7 +123,7 @@ switch(s){
 		AlarmClock.AlarmA.set(0,0,1,0);
 		break;
 	case SIG_ALARM_A:
-		transition(Warming_state);
+		transition(Alarm_state);
 		break;
 	case SIG_ALARM_B:
 
@@ -141,7 +141,7 @@ switch(s){
 		AlarmClock.AlarmA.set(0,0,2,0);
 		break;
 	case SIG_ALARM_A: //the button is being pushed down for more than a 2 secs
-		transition(TemperatureSet_state);
+		transition(Alarm_state);
 		break;
 	case SIG_ALARM_B:
 
@@ -227,30 +227,45 @@ uint16_t measurement;
 }
 }
 void StateMachine::Alarm_state(Signal s){
+static int LoopCount;
 static int TuneIndex;
+static bool TuneRunning;
 switch(s){
 	case SIG_ENTRY:
+		LoopCount=0;
 		TuneIndex=0;
+		TuneRunning=false;
 		AlarmClock.AlarmB.deactivate();
 		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmA.set(0,0,0,100);
-		break;
+//		AlarmClock.AlarmA.set(0,0,0,10);
+//		break;
 	case SIG_ALARM_A:
-		if(TuneIndex>=BasicTune.size()-1){
-			transition(Standby_state);
-			return;
+		if(TuneIndex>=20){
+			if(LoopCount>=3){
+				transition(Standby_state);
+				return;
+			}else{
+				++LoopCount;
+				TuneIndex=0;
+			}
+
 		}
-		AlarmClock.AlarmA.set(0,
-				BasicTune[TuneIndex].minutes,
-				BasicTune[TuneIndex].seconds,
-				BasicTune[TuneIndex].subseconds);
-		if(BasicTune[TuneIndex].running){
+
+		if(!TuneRunning){
+		AlarmClock.AlarmA.set(0,0,
+				BasicTune[TuneIndex].onSeconds,
+				BasicTune[TuneIndex].onSubseconds);
 			buzzer.setFrequency(BasicTune[TuneIndex].frequecy);
 			buzzer.start();
+			TuneRunning=true;
 		}else{
+		AlarmClock.AlarmA.set(0,0,
+				BasicTune[TuneIndex].offSeconds,
+				BasicTune[TuneIndex].offSubseconds);
 			buzzer.stop();
+			TuneRunning=false;
+			TuneIndex++;
 		}
-		TuneIndex++;
 		break;
 	case SIG_BUTTON_1_UP:
 	case SIG_BUTTON_2_UP:
