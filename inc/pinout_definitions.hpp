@@ -49,12 +49,10 @@
 #define BUTTON_1_ITn EXTI0_1_IRQn
 #define BUTTON_2_ITn EXTI2_3_IRQn
 
-
 //state definitions I put it here instead of the StateMachine header, to prevent circular dependencies
 typedef uint8_t Signal;
-typedef void(*SignalCallback)(Signal);
-enum
-{
+typedef void (*SignalCallback)(Signal);
+enum {
 	SIG_NONE,
 	SIG_ALARM_A,
 	SIG_ALARM_B,
@@ -72,4 +70,11 @@ enum
 #define THERMOMETER_ADC_CHANNEL ADC_CHANNEL_1
 #define THERMOMETER_REFERENCE_PIN GPIO_PIN_5
 #define THERMOMETER_REFERENCE_PORT GPIOA
+// BattCheck pin definitions
+#define BATTCHECK_PIN GPIO_PIN_6
+#define BATTCHECK_PORT GPIOA
+#define BATTCHECK_ADC_INSTANCE ADC1
+#define BATTCHECK_ADC_CHANNEL ADC_CHANNEL_1
+#define BATTCHECK_REFERENCE_PIN GPIO_PIN_7
+#define BATTCHECK_REFERENCE_PORT GPIOA
 #endif /* PINOUT_DEFINITIONS_HPP_ */

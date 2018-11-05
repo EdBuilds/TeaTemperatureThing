@@ -17,7 +17,7 @@ typedef struct {
 	uint8_t offSubseconds;
 	uint16_t frequecy;
 } Note;
-#define BPM 120
+#define BPM 130
 #define TIMEBASE 60*256/BPM/4
 #define NOTE_E5 659
 #define NOTE_C0	16

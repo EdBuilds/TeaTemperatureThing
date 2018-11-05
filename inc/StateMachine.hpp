@@ -29,7 +29,6 @@ class StateMachine {
 	static const EepromItem<setpointData> Setpoint;
 	static const EepromItem<calibrationData> CalibrationData;
 	static etl::queue<Signal,20> SignalContainer;
-	//static etl::vector<Note,7>::iterator TuneIterator;
 	static Thermometer thermometer;
 	static Display display;
 	static Buzzer buzzer;
