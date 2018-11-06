@@ -4,14 +4,14 @@
  *  Created on: Sep 30, 2018
  *      Author: tamas
  */
-#include "StateMachine.hpp"
-#include "stm32l0xx.h"
-#include "pinout_definitions.hpp"
-#include <string>
-#include "stm32l0xx_hal.h"
-#include "stm32l0xx.h"
-#include "stm32l0xx_nucleo_32.h"
-#include "Tunes.hpp"
+#include "inc/StateMachine.hpp"
+//#include "stm32l0xx.h"
+#include "inc/pinout_definitions.hpp"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
+//#include "stm32l0xx.h"
+//#include "stm32l0xx_nucleo_32.h"
+#include "inc/Tunes.hpp"
+
 RealTimeClock StateMachine::AlarmClock;
 State StateMachine::CurrentState = &Standby_state;
 Signal StateMachine::NextSignal;
@@ -19,7 +19,6 @@ Button StateMachine::Buttons;
 Thermometer StateMachine::thermometer;
 Buzzer StateMachine::buzzer;
 Display StateMachine::display;
-
 const EepromItem<setpointData> StateMachine::Setpoint;
 
 etl::queue<Signal, 20> StateMachine::SignalContainer;
@@ -35,9 +34,9 @@ void StateMachine::Init(bool WakeupRun) {
 	if (WakeupRun) { //the mcu has been woken up from standby,
 		//and the button down callback needs to be called manually
 		//detect which button has been pressed
-		if (Buttons.read(Button_1) == GPIO_PIN_SET) {
+		if (Buttons.Read(BUTTON_1) == GPIO_PIN_SET) {
 			SetNextSignal(SIG_BUTTON_1_DN);
-		} else if (Buttons.read(Button_2) == GPIO_PIN_SET) {
+		} else if (Buttons.Read(BUTTON_2) == GPIO_PIN_SET) {
 			SetNextSignal(SIG_BUTTON_2_DN);
 		} else {
 			//this happens only when the button has been released before the readout.
@@ -272,15 +271,15 @@ void StateMachine::Alarm_state(Signal s) {
 		break;
 	case SIG_ALARM_B:
 		if (DisplayOn) {
-					display.Disable();
-					DisplayOn = false;
-				} else {
-					measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-					display.Print(measurement);
-					display.Enable();
-					DisplayOn = true;
-				}
-				AlarmClock.AlarmB.set(0, 0, 0, TIMEBASE * 4);
+			display.Disable();
+			DisplayOn = false;
+		} else {
+			measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
+			display.Print(measurement);
+			display.Enable();
+			DisplayOn = true;
+		}
+		AlarmClock.AlarmB.set(0, 0, 0, TIMEBASE * 4);
 		break;
 	case SIG_BUTTON_1_UP:
 	case SIG_BUTTON_2_UP:

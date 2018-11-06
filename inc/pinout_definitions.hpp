@@ -7,7 +7,7 @@
 
 #ifndef PINOUT_DEFINITIONS_HPP_
 #define PINOUT_DEFINITIONS_HPP_
-#include "stm32l0xx.h"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
 //Buzzer pin definitions
 #define BUZZER_TIMER_CHANNEL TIM_CHANNEL_4
 #define BUZZER_TIMER TIM2
@@ -49,20 +49,6 @@
 #define BUTTON_1_ITn EXTI0_1_IRQn
 #define BUTTON_2_ITn EXTI2_3_IRQn
 
-//state definitions I put it here instead of the StateMachine header, to prevent circular dependencies
-typedef uint8_t Signal;
-typedef void (*SignalCallback)(Signal);
-enum {
-	SIG_NONE,
-	SIG_ALARM_A,
-	SIG_ALARM_B,
-	SIG_BUTTON_1_DN,
-	SIG_BUTTON_1_UP,
-	SIG_BUTTON_2_DN,
-	SIG_BUTTON_2_UP,
-	SIG_ENTRY,
-	SIG_EXIT
-};
 // thermometer pin definitions
 #define THERMOMETER_PIN GPIO_PIN_1
 #define THERMOMETER_PORT GPIOA

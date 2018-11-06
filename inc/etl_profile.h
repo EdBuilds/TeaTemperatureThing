@@ -10,8 +10,8 @@
 #define ETL_VERBOSE_ERRORS
 
 #ifdef _MSC_VER
-#include "etl/profiles/msvc.h"
+#include "etl/include/etl/profiles/msvc.h"
 #else
-#include "etl/profiles/gcc_generic.h"
+#include "etl/include/etl/profiles/gcc_generic.h"
 #endif
 #endif

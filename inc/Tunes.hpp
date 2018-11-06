@@ -7,8 +7,7 @@
 
 #ifndef TUNES_HPP_
 #define TUNES_HPP_
-#include "inttypes.h"
-
+#include <inttypes.h>
 
 typedef struct {
 	uint8_t onSeconds;
@@ -142,29 +141,25 @@ typedef struct {
 #define NOTE_B9	15804
 
 static const Note BasicTune[20] = {
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5},
+		{ 0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0,
+				TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2,
+				NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4 }, { 0,
+				TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5 },
 
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_E5},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_E5},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_D5},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_D5},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_A4},
+		{ 0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_E5 }, { 0, TIMEBASE * 1, 0,
+				TIMEBASE * 3, NOTE_E5 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2,
+				NOTE_D5 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_D5 }, { 0,
+				TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_A4 },
 
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5},
+		{ 0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0,
+				TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2,
+				NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4 }, { 0,
+				TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5 },
 
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4},
-		{0, TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5}
+		{ 0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0,
+				TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2,
+				NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4 }, { 0,
+				TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5 }
 
 };
 

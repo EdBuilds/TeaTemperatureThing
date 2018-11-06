@@ -9,13 +9,12 @@
 */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32l0xx_hal.h"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "stm32l0xx.h"
 #ifdef USE_RTOS_SYSTICK
 #include <cmsis_os.h>
 #endif
 #include "stm32l0xx_it.h"
-#include <RealTimeClock.hpp>
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/

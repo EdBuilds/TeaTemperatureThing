@@ -4,8 +4,8 @@
  *  Created on: Oct 2, 2018
  *      Author: tamas
  */
-#include "Button_driver.hpp"
-#include "stm32l0xx_hal.h"
+#include "inc/Button_driver.hpp"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "stm32l0xx.h"
 #include "stm32l0xx_it.h"
 #include "pinout_definitions.hpp"
@@ -40,12 +40,12 @@ void Button::Enable(IRQn_Type InterruptRoutine){
 	HAL_NVIC_SetPriority(InterruptRoutine, 0, 0);
 	HAL_NVIC_EnableIRQ(InterruptRoutine);
 }
-GPIO_PinState Button::read(ButtonID button){
+GPIO_PinState Button::Read(ButtonID button){
 	switch(button){
-	case Button_1:
+	case BUTTON_1:
 		return HAL_GPIO_ReadPin(BUTTON_1_PORT,BUTTON_1_PIN);
 		break;
-	case Button_2:
+	case BUTTON_2:
 		return HAL_GPIO_ReadPin(BUTTON_2_PORT,BUTTON_2_PIN);
 		break;
 	default:

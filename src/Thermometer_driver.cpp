@@ -5,13 +5,13 @@
  *      Author: tamas
  */
 
-#include <Thermometer_driver.hpp>
-#include "ErrorHandler.hpp"
-#include "stm32l0xx_hal.h"
-#include "stm32l0xx.h"
-#include "stm32l0xx_hal_tim.h"
-#include "stm32l0xx_hal_gpio.h"
-#include "stm32l0xx_nucleo_32.h"
+#include "inc/Thermometer_driver.hpp"
+#include "inc/ErrorHandler.hpp"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
+//#include "stm32l0xx.h"
+//#include "stm32l0xx_hal_tim.h"
+//#include "stm32l0xx_hal_gpio.h"
+//#include "stm32l0xx_nucleo_32.h"
 Thermometer::Thermometer(): ReferenceEnable(THERMOMETER_REFERENCE_PIN,THERMOMETER_REFERENCE_PORT){
 	    __HAL_RCC_ADC1_CLK_ENABLE();
 		GPIO_InitTypeDef gpioInit;

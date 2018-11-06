@@ -4,10 +4,10 @@
  *  Created on: Jul 27, 2018
  *      Author: tamas
  */
-#include "display_driver.hpp"
-#include "stm32l011xx.h"
-#include "stm32l0xx_it.h"
-#include "stm32l0xx_hal.h"
+#include "inc/display_driver.hpp"
+//#include "stm32l011xx.h"
+#include "inc/stm32l0xx_it.h"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "stdlib.h"
 #define ASCII_OFFSET 32
 TIM_HandleTypeDef Display::htim21;

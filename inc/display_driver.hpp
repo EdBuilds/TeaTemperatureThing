@@ -7,9 +7,10 @@
 
 #ifndef DISPLAY_DRIVER_HPP_
 #define DISPLAY_DRIVER_HPP_
-#include "stm32l0xx_hal.h"
-#include "GPIO_wrapper.hpp"
-#include "pinout_definitions.hpp"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
+#include "inc/GPIO_wrapper.hpp"
+#include "inc/pinout_definitions.hpp"
+
 class Display {
 	static const uint8_t SevenSegmentASCII[96];
 	struct segmentBlock {

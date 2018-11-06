@@ -10,16 +10,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <RealTimeClock.hpp>
-#include "stm32l0xx.h"
-#include "stm32l0xx_nucleo_32.h"
-#include "display_driver.hpp"
-#include "Buzzer_driver.hpp"
-#include "stm32l0xx_hal_rtc.h"
-#include "StateMachine.hpp"
-#include "Button_driver.hpp"
-#include "Thermometer_driver.hpp"
-#include "etl/queue.h"
+#include "inc/RealTimeClock.hpp"
+//#include "stm32l0xx.h"
+//#include "stm32l0xx_nucleo_32.h"
+#include "inc/display_driver.hpp"
+#include "inc/Buzzer_driver.hpp"
+#include "inc/StateMachine.hpp"
+#include "inc/Button_driver.hpp"
+#include "inc/Thermometer_driver.hpp"
+#include "etl/include/etl/queue.h"
 
 void SystemClock_Config(void);
 void SystemPower_Config(void);

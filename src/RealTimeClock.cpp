@@ -5,12 +5,12 @@
  *      Author: tamas
  */
 
-#include <RealTimeClock.hpp>
-#include "ErrorHandler.hpp"
-#include "stm32l0xx.h"
-#include "stm32l0xx_hal.h"
-#include "stm32l0xx_hal_rtc.h"
-#include "display_driver.hpp"
+#include "inc/RealTimeClock.hpp"
+#include "inc/ErrorHandler.hpp"
+#include "inc/stm32l0xx_it.h"
+#include "HAL_Driver/Inc/stm32l0xx_hal.h"
+//#include "stm32l0xx_hal_rtc.h"
+#include "inc/display_driver.hpp"
 RTC_HandleTypeDef RealTimeClock::hrtc=RTC_HandleTypeDef();
 Alarm RealTimeClock::AlarmA;
 Alarm RealTimeClock::AlarmB;
