@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#ifndef REALTIMECLOCK_HPP_
-#define REALTIMECLOCK_HPP_
+#ifndef REAL_TIME_CLOCK_HPP_
+#define REAL_TIME_CLOCK_HPP_
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "inc/signal_definition.hpp"
 #ifdef __cplusplus
@@ -38,4 +38,4 @@ public:
 	void Init(SignalCallback AlarmCallback);
 };
 
-#endif /* REALTIMECLOCK_HPP_ */
+#endif /* REAL_TIME_CLOCK_HPP_ */

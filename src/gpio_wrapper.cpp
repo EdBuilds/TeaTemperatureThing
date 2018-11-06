@@ -4,7 +4,7 @@
  *  Created on: Jul 28, 2018
  *      Author: tamas
  */
-#include "inc/GPIO_wrapper.hpp"
+#include <gpio_wrapper.hpp>
 OutputPin::OutputPin() {
 }
 OutputPin::OutputPin(uint16_t pin, GPIO_TypeDef * port) {

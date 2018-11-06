@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#ifndef ERRORHANDLER_HPP_
-#define ERRORHANDLER_HPP_
+#ifndef ERROR_HANDLER_HPP_
+#define ERROR_HANDLER_HPP_
 
 inline void ErrorFatal(char *file, int line) {
 	while (true){
@@ -14,4 +14,4 @@ inline void ErrorFatal(char *file, int line) {
 	}
 }
 
-#endif /* ERRORHANDLER_HPP_ */
+#endif /* ERROR_HANDLER_HPP_ */

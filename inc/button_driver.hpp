@@ -14,7 +14,7 @@ typedef enum {
 	BUTTON_1, BUTTON_2
 } ButtonID;
 class Button {
-public:
+	public:
 	static SignalCallback ButtonCallback;
 	void Init(SignalCallback buttonCallback);
 	GPIO_PinState Read(ButtonID button);

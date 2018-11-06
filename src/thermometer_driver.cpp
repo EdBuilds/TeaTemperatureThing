@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#include "inc/Thermometer_driver.hpp"
-#include "inc/ErrorHandler.hpp"
+#include <error_handler.hpp>
+#include <thermometer_driver.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 //#include "stm32l0xx.h"
 //#include "stm32l0xx_hal_tim.h"

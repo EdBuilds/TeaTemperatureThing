@@ -4,8 +4,8 @@
  *  Created on: Aug 9, 2018
  *      Author: tamas
  */
-#include "inc/Buzzer_driver.hpp"
-#include "inc/ErrorHandler.hpp"
+#include <buzzer_driver.hpp>
+#include <error_handler.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 //#include "stm32l0xx_hal_tim.h"
 //#include "stm32l0xx_hal_gpio.h"

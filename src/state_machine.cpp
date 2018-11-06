@@ -4,13 +4,12 @@
  *  Created on: Sep 30, 2018
  *      Author: tamas
  */
-#include "inc/StateMachine.hpp"
-//#include "stm32l0xx.h"
+#include <state_machine.hpp>
+#include <tunes.hpp>
 #include "inc/pinout_definitions.hpp"
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 //#include "stm32l0xx.h"
 //#include "stm32l0xx_nucleo_32.h"
-#include "inc/Tunes.hpp"
 
 RealTimeClock StateMachine::AlarmClock;
 State StateMachine::CurrentState = &Standby_state;

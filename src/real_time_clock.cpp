@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#include "inc/RealTimeClock.hpp"
-#include "inc/ErrorHandler.hpp"
+#include <error_handler.hpp>
+#include <real_time_clock.hpp>
 #include "inc/stm32l0xx_it.h"
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 //#include "stm32l0xx_hal_rtc.h"

@@ -5,15 +5,15 @@
  *      Author: tamas
  */
 
-#ifndef STATEMACHINE_HPP_
-#define STATEMACHINE_HPP_
+#ifndef STATE_MACHINE_HPP_
+#define STATE_MACHINE_HPP_
+#include <inc/button_driver.hpp>
+#include <inc/buzzer_driver.hpp>
+#include <inc/persistent_storage.hpp>
+#include <inc/real_time_clock.hpp>
+#include <inc/thermometer_driver.hpp>
 #include "inc/pinout_definitions.hpp"
-#include "inc/RealTimeClock.hpp"
-#include "inc/Button_driver.hpp"
-#include "inc/Thermometer_driver.hpp"
 #include "inc/display_driver.hpp"
-#include "inc/Buzzer_driver.hpp"
-#include "inc/Persistent_storage.hpp"
 #include "inc/signal_definition.hpp"
 #include "etl/include/etl/queue.h"
 #define STATE_BTNDN_DELAY 2
@@ -48,4 +48,4 @@ private:
 	static Button Buttons;
 };
 
-#endif /* STATEMACHINE_HPP_ */
+#endif /* STATE_MACHINE_HPP_ */

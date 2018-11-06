@@ -7,8 +7,8 @@
 
 #ifndef DISPLAY_DRIVER_HPP_
 #define DISPLAY_DRIVER_HPP_
+#include <inc/gpio_wrapper.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
-#include "inc/GPIO_wrapper.hpp"
 #include "inc/pinout_definitions.hpp"
 
 class Display {

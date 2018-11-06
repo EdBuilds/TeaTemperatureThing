@@ -8,16 +8,14 @@
   ******************************************************************************
 */
 
+#include <button_driver.hpp>
+#include <buzzer_driver.hpp>
+#include <real_time_clock.hpp>
+#include <state_machine.hpp>
 #include <stdio.h>
 #include <stdlib.h>
-#include "inc/RealTimeClock.hpp"
-//#include "stm32l0xx.h"
-//#include "stm32l0xx_nucleo_32.h"
+#include <thermometer_driver.hpp>
 #include "inc/display_driver.hpp"
-#include "inc/Buzzer_driver.hpp"
-#include "inc/StateMachine.hpp"
-#include "inc/Button_driver.hpp"
-#include "inc/Thermometer_driver.hpp"
 #include "etl/include/etl/queue.h"
 
 void SystemClock_Config(void);

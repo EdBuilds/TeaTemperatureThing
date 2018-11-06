@@ -4,10 +4,10 @@
  *  Created on: Sep 16, 2018
  *      Author: tamas
  */
-#include "inc/Persistent_storage.hpp"
+#include <error_handler.hpp>
+#include <persistent_storage.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 //#include "stm32l0xx_hal_flash.h"
-#include "inc/ErrorHandler.hpp"
 
 
 template <class T>

@@ -4,7 +4,7 @@
  *  Created on: Oct 2, 2018
  *      Author: tamas
  */
-#include "inc/Button_driver.hpp"
+#include <button_driver.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "stm32l0xx.h"
 #include "stm32l0xx_it.h"
