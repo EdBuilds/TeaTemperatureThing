@@ -5,18 +5,18 @@
  *      Author: tamas
  */
 
-#ifndef PINOUT_DEFINITIONS_HPP_
-#define PINOUT_DEFINITIONS_HPP_
+#ifndef INC_PINOUT_DEFINITIONS_HPP_
+#define INC_PINOUT_DEFINITIONS_HPP_
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
-//Buzzer pin definitions
+// Buzzer pin definitions
 #define BUZZER_TIMER_CHANNEL TIM_CHANNEL_4
 #define BUZZER_TIMER TIM2
 #define BUZZER_GPIO_PORT GPIOA
 #define BUZZER_GPIO_PIN GPIO_PIN_3
 
-//Display pin definitions
-#define SEGMENT_NUMBER_IN_BLOCK 8	//I made a define for this, just to make a define
-#define CONNECTED_BLOCKS 2 			//these defines are really not necessary, what am I doing?
+// Display pin definitions
+#define SEGMENT_NUMBER_IN_BLOCK 8
+#define CONNECTED_BLOCKS 2
 #define BLOCK_1_PIN_A GPIO_PIN_12
 #define BLOCK_1_PIN_B GPIO_PIN_0
 #define BLOCK_1_PIN_C GPIO_PIN_7
@@ -41,7 +41,7 @@
 #define BLOCK_2_ENABLE_PIN GPIO_PIN_4
 #define BLOCK_2_ENABLE_PORT GPIOA
 
-//Button pin definitions
+// Button pin definitions
 #define BUTTON_1_PIN GPIO_PIN_0
 #define BUTTON_2_PIN GPIO_PIN_2
 #define BUTTON_1_PORT GPIOA
@@ -63,4 +63,4 @@
 #define BATTCHECK_ADC_CHANNEL ADC_CHANNEL_1
 #define BATTCHECK_REFERENCE_PIN GPIO_PIN_7
 #define BATTCHECK_REFERENCE_PORT GPIOA
-#endif /* PINOUT_DEFINITIONS_HPP_ */
+#endif  // INC_PINOUT_DEFINITIONS_HPP_

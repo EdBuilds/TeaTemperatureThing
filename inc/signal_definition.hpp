@@ -7,10 +7,10 @@
  *      state machine. These definition were moved here to avid circular dependencies
  */
 
-#ifndef SIGNAL_DEFINITION_HPP_
-#define SIGNAL_DEFINITION_HPP_
-#include "inttypes.h"
-/* */
+#ifndef INC_SIGNAL_DEFINITION_HPP_
+#define INC_SIGNAL_DEFINITION_HPP_
+#include <inttypes.h>
+
 typedef uint8_t Signal;
 typedef void (*SignalCallback)(Signal);
 typedef void (*State)(Signal);
@@ -25,7 +25,4 @@ enum {
 	SIG_ENTRY,
 	SIG_EXIT
 };
-
-
-
-#endif /* SIGNAL_DEFINITION_HPP_ */
+#endif  // INC_SIGNAL_DEFINITION_HPP_

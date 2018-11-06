@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#ifndef STATE_MACHINE_HPP_
-#define STATE_MACHINE_HPP_
+#ifndef INC_STATE_MACHINE_HPP_
+#define INC_STATE_MACHINE_HPP_
 #include <inc/button_driver.hpp>
 #include <inc/buzzer_driver.hpp>
 #include <inc/persistent_storage.hpp>
@@ -20,12 +20,13 @@
 #define CYCLE_TIMEOUT 20
 
 class StateMachine {
-public:
+	public:
 	static RealTimeClock AlarmClock;
 
 	void Init(bool WakeupRun);
 	void Update();
-private:
+
+	private:
 	static const EepromItem<HeaderData> Header;
 	static const EepromItem<setpointData> Setpoint;
 	static const EepromItem<calibrationData> CalibrationData;
@@ -35,8 +36,9 @@ private:
 	static Buzzer buzzer;
 	static State CurrentState;
 	static Signal NextSignal;
+	static Button Buttons;
 	static void SetNextSignal(Signal s);
-
+	// State functions
 	static void transition(State NewState);
 	static void Standby_state(Signal s);
 	static void BattCheck_state(Signal s);
@@ -45,7 +47,6 @@ private:
 	static void Cooling_state(Signal s);
 	static void Alarm_state(Signal s);
 	static void TemperatureSet_state(Signal s);
-	static Button Buttons;
 };
 
-#endif /* STATE_MACHINE_HPP_ */
+#endif  // INC_STATE_MACHINE_HPP_

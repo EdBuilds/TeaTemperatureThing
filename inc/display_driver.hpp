@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#ifndef DISPLAY_DRIVER_HPP_
-#define DISPLAY_DRIVER_HPP_
+#ifndef INC_DISPLAY_DRIVER_HPP_
+#define INC_DISPLAY_DRIVER_HPP_
 #include <inc/gpio_wrapper.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "inc/pinout_definitions.hpp"
@@ -14,7 +14,6 @@
 class Display {
 	static const uint8_t SevenSegmentASCII[96];
 	struct segmentBlock {
-	public:
 		OutputPin EnablePin;
 		OutputPin Pins[SEGMENT_NUMBER_IN_BLOCK];
 		GPIO_PinState PinSetting[SEGMENT_NUMBER_IN_BLOCK];
@@ -33,13 +32,14 @@ class Display {
 	};
 	static int activeBlock;
 	char buffer[5];
-public:
+
+	public:
 	static TIM_HandleTypeDef htim21;
 	static segmentBlock Blocks[CONNECTED_BLOCKS];
 	void Init();
 	Display();
 	static void TimerCallback();
-//I know this is a terrible varable naming, I take any suggestions
+	// I know this is a terrible varable naming, I take any suggestions
 	void Print(char* stringToPrint);
 	void Print(int8_t numberToPrint);
 	void Clear();
@@ -48,4 +48,4 @@ public:
 	void All();
 };
 
-#endif /* DISPLAY_DRIVER_HPP_ */
+#endif  // INC_DISPLAY_DRIVER_HPP_

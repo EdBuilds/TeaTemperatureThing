@@ -4,15 +4,14 @@
  *  Created on: Aug 9, 2018
  *      Author: tamas
  */
-//this is actually a bad naming for the file. I wanted to be consistent with the display, for nothing
-#ifndef BUZZER_DRIVER_HPP_
-#define BUZZER_DRIVER_HPP_
+
+#ifndef INC_BUZZER_DRIVER_HPP_
+#define INC_BUZZER_DRIVER_HPP_
 #include "inc/pinout_definitions.hpp"
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 
 class Buzzer {
-
-public:
+	public:
 	TIM_HandleTypeDef htim2;
 	TIM_OC_InitTypeDef sConfigOC;
 	bool isRunning;
@@ -22,4 +21,4 @@ public:
 	void stop();
 };
 
-#endif /* BUZZER_DRIVER_HPP_ */
+#endif  // INC_BUZZER_DRIVER_HPP_

@@ -34,12 +34,12 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L0xx_IT_H
-#define __STM32L0xx_IT_H
+#ifndef INC_STM32L0XX_IT_H_
+#define INC_STM32L0XX_IT_H_
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -61,6 +61,6 @@ void TIM21_IRQHandler(void);
 }
 #endif
 
-#endif /* __STM32L0xx_IT_H */
+#endif  // INC_STM32L0XX_IT_H_
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

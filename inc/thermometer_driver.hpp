@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#ifndef THERMOMETER_DRIVER_HPP_
-#define THERMOMETER_DRIVER_HPP_
+#ifndef INC_THERMOMETER_DRIVER_HPP_
+#define INC_THERMOMETER_DRIVER_HPP_
 #include <inc/gpio_wrapper.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "inc/pinout_definitions.hpp"
@@ -14,9 +14,10 @@ class Thermometer {
 	OutputPin ReferenceEnable;
 	ADC_HandleTypeDef AdcHandle;
 	ADC_ChannelConfTypeDef AdcChannel;
-public:
+
+	public:
 	uint16_t measure();
 	Thermometer();
 };
 
-#endif /* THERMOMETER_DRIVER_HPP_ */
+#endif  // INC_THERMOMETER_DRIVER_HPP_

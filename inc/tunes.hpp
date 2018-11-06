@@ -5,8 +5,8 @@
  *      Author: tamas
  */
 
-#ifndef TUNES_HPP_
-#define TUNES_HPP_
+#ifndef INC_TUNES_HPP_
+#define INC_TUNES_HPP_
 #include <inttypes.h>
 
 typedef struct {
@@ -160,7 +160,6 @@ static const Note BasicTune[20] = {
 				TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2,
 				NOTE_B4 }, { 0, TIMEBASE * 1, 0, TIMEBASE * 2, NOTE_B4 }, { 0,
 				TIMEBASE * 1, 0, TIMEBASE * 1, NOTE_E5 }
-
 };
 
-#endif /* TUNES_HPP_ */
+#endif  // INC_TUNES_HPP_

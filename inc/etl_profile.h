@@ -4,8 +4,8 @@
  *  Created on: Oct 14, 2018
  *      Author: tamas
  */
-#ifndef __ETL_PROFILE_H__
-#define __ETL_PROFILE_H__
+#ifndef INC_ETL_PROFILE_H_
+#define INC_ETL_PROFILE_H_
 
 #define ETL_VERBOSE_ERRORS
 
