@@ -28,8 +28,7 @@ void StateMachine::Init(bool WakeupRun) {
 	buzzer.Init();
 	display.Init();
 	display.Print("aa");
-	//AlarmClock.AlarmA.set(0,0,0,10);
-	//display.Enable();
+
 	if (WakeupRun) { //the mcu has been woken up from standby,
 		//and the button down callback needs to be called manually
 		//detect which button has been pressed
