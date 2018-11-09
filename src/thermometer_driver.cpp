@@ -12,53 +12,53 @@
 //#include "stm32l0xx_hal_tim.h"
 //#include "stm32l0xx_hal_gpio.h"
 //#include "stm32l0xx_nucleo_32.h"
-Thermometer::Thermometer(): ReferenceEnable(THERMOMETER_REFERENCE_PIN,THERMOMETER_REFERENCE_PORT){
+Thermometer::Thermometer(): reference_enable_(THERMOMETER_REFERENCE_PIN,THERMOMETER_REFERENCE_PORT){
 	    __HAL_RCC_ADC1_CLK_ENABLE();
-		GPIO_InitTypeDef gpioInit;
-	    gpioInit.Pin = THERMOMETER_PIN;
-	    gpioInit.Mode = GPIO_MODE_ANALOG;
-	    gpioInit.Pull = GPIO_NOPULL;
-	    HAL_GPIO_Init(THERMOMETER_PORT, &gpioInit);
+		GPIO_InitTypeDef gpio_init;
+	    gpio_init.Pin = THERMOMETER_PIN;
+	    gpio_init.Mode = GPIO_MODE_ANALOG;
+	    gpio_init.Pull = GPIO_NOPULL;
+	    HAL_GPIO_Init(THERMOMETER_PORT, &gpio_init);
 
-	    AdcHandle=ADC_HandleTypeDef();
-	    AdcChannel=ADC_ChannelConfTypeDef();
+	    adc_handle_=ADC_HandleTypeDef();
+	    adc_channel_=ADC_ChannelConfTypeDef();
 
-	    AdcHandle.Instance = THERMOMETER_ADC_INSTANCE;
-	    AdcHandle.Init.ClockPrescaler = ADC_CLOCKPRESCALER_PCLK_DIV2;
-	    AdcHandle.Init.Resolution = ADC_RESOLUTION_12B;
-	    AdcHandle.Init.ScanConvMode = DISABLE;
-	    AdcHandle.Init.ContinuousConvMode = ENABLE;
-	    AdcHandle.Init.DiscontinuousConvMode = DISABLE;
-	    AdcHandle.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-	    AdcHandle.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-	    AdcHandle.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-	    AdcHandle.Init.DMAContinuousRequests = ENABLE;
-	    AdcHandle.Init.EOCSelection = DISABLE;
+	    adc_handle_.Instance = THERMOMETER_ADC_INSTANCE;
+	    adc_handle_.Init.ClockPrescaler = ADC_CLOCKPRESCALER_PCLK_DIV2;
+	    adc_handle_.Init.Resolution = ADC_RESOLUTION_12B;
+	    adc_handle_.Init.ScanConvMode = DISABLE;
+	    adc_handle_.Init.ContinuousConvMode = ENABLE;
+	    adc_handle_.Init.DiscontinuousConvMode = DISABLE;
+	    adc_handle_.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+	    adc_handle_.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+	    adc_handle_.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+	    adc_handle_.Init.DMAContinuousRequests = ENABLE;
+	    adc_handle_.Init.EOCSelection = DISABLE;
 
-	    HAL_ADC_Init(&AdcHandle);
+	    HAL_ADC_Init(&adc_handle_);
 
-	    AdcChannel.Channel = THERMOMETER_ADC_CHANNEL;
-	    AdcChannel.Rank = 1;
+	    adc_channel_.Channel = THERMOMETER_ADC_CHANNEL;
+	    adc_channel_.Rank = 1;
 
-	    if (HAL_ADC_ConfigChannel(&AdcHandle, &AdcChannel) != HAL_OK)
+	    if (HAL_ADC_ConfigChannel(&adc_handle_, &adc_channel_) != HAL_OK)
 	    {
-	    	ErrorFatal(__FILE__, __LINE__);
+	    	FatalError(__FILE__, __LINE__);
 	    }
 	    //Initialize reference pin
 	   //ReferenceEnable.reset();
 	}
-uint16_t Thermometer::measure(){
-	uint16_t returnValue=0;
+uint16_t Thermometer::Measure(){
+	uint16_t return_value=0;
     //ReferenceEnable.set();
     //It takes around 4 us for the voltage to stabilize, It would be a good idea to put a 5 us delay here.
-	HAL_ADC_Start(&AdcHandle);
-	if (HAL_ADC_PollForConversion(&AdcHandle, 1000) == HAL_OK)
+	HAL_ADC_Start(&adc_handle_);
+	if (HAL_ADC_PollForConversion(&adc_handle_, 1000) == HAL_OK)
 	{
-	     returnValue=HAL_ADC_GetValue(&AdcHandle);
+	     return_value=HAL_ADC_GetValue(&adc_handle_);
 	}
-	HAL_ADC_Stop(&AdcHandle);
+	HAL_ADC_Stop(&adc_handle_);
     //ReferenceEnable.reset();
-return returnValue;
+return return_value;
 }
 
 

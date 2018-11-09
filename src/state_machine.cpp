@@ -12,29 +12,29 @@
 //#include "stm32l0xx_nucleo_32.h"
 
 RealTimeClock StateMachine::AlarmClock;
-State StateMachine::CurrentState = &Standby_state;
-Signal StateMachine::NextSignal;
-Button StateMachine::Buttons;
-Thermometer StateMachine::thermometer;
-Buzzer StateMachine::buzzer;
-Display StateMachine::display;
-const EepromItem<setpointData> StateMachine::Setpoint;
+State StateMachine::current_state_ = &StandbyState;
+Signal StateMachine::next_signal_;
+Button StateMachine::buttons_;
+Thermometer StateMachine::thermometer_;
+Buzzer StateMachine::buzzer_;
+Display StateMachine::display_;
+const EepromItem<SetpointData> StateMachine::setpoint_;
 
-etl::queue<Signal, 20> StateMachine::SignalContainer;
-void StateMachine::Init(bool WakeupRun) {
-	CurrentState = &Standby_state;
+etl::queue<Signal, 20> StateMachine::signal_container_;
+void StateMachine::Init(bool wakeup_run) {
+	current_state_ = &StandbyState;
 	AlarmClock.Init(&SetNextSignal);
-	Buttons.Init(&SetNextSignal);
-	buzzer.Init();
-	display.Init();
-	display.Print("aa");
+	buttons_.Init(&SetNextSignal);
+	buzzer_.Init();
+	display_.Init();
+	display_.Print("aa");
 
-	if (WakeupRun) { //the mcu has been woken up from standby,
+	if (wakeup_run) { //the mcu has been woken up from standby,
 		//and the button down callback needs to be called manually
 		//detect which button has been pressed
-		if (Buttons.Read(BUTTON_1) == GPIO_PIN_SET) {
+		if (buttons_.Read(BUTTON_1) == GPIO_PIN_SET) {
 			SetNextSignal(SIG_BUTTON_1_DN);
-		} else if (Buttons.Read(BUTTON_2) == GPIO_PIN_SET) {
+		} else if (buttons_.Read(BUTTON_2) == GPIO_PIN_SET) {
 			SetNextSignal(SIG_BUTTON_2_DN);
 		} else {
 			//this happens only when the button has been released before the readout.
@@ -46,44 +46,44 @@ void StateMachine::Init(bool WakeupRun) {
 }
 
 void StateMachine::Update() {
-	if (SignalContainer.empty()) {
+	if (signal_container_.empty()) {
 		//there is nothing to do currently, entering stop mode
 		//HAL_SuspendTick();
 		//HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI);
 		//HAL_ResumeTick();
 		return;
 	}
-	Signal NextSignal = SignalContainer.front();
+	Signal next_signal = signal_container_.front();
 
 //Debouncing the buttons by using a small delay, and then reenabling the interrupt routines
 //It would be much cleaner to use a timer for this, but Im getting fed up with these buttons.
-	if (NextSignal == SIG_BUTTON_1_UP || NextSignal == SIG_BUTTON_1_DN) {
+	if (next_signal == SIG_BUTTON_1_UP || next_signal == SIG_BUTTON_1_DN) {
 		HAL_Delay(5);
-		Buttons.Enable(BUTTON_1_ITn);
-	} else if (NextSignal == SIG_BUTTON_2_UP || NextSignal == SIG_BUTTON_2_DN) {
+		buttons_.Enable(BUTTON_1_ITn);
+	} else if (next_signal == SIG_BUTTON_2_UP || next_signal == SIG_BUTTON_2_DN) {
 		HAL_Delay(5);
-		Buttons.Enable(BUTTON_2_ITn);
+		buttons_.Enable(BUTTON_2_ITn);
 	}
 //a temporary signal container needs to be created here to be able to set the NextSignal to NONE,
 //because the handling of the current state can take a long time, and if an interrupt sets the signal, it would be owerwritten.
 //
 
-	CurrentState(NextSignal);
-	SignalContainer.pop();
+	current_state_(next_signal);
+	signal_container_.pop();
 }
 void StateMachine::SetNextSignal(Signal s) {
-	SignalContainer.push(s);
+	signal_container_.push(s);
 }
 
-void StateMachine::transition(State NewState) {
-	if (CurrentState != NULL) {
-		CurrentState(SIG_EXIT);
+void StateMachine::Transition(State new_state) {
+	if (current_state_ != NULL) {
+		current_state_(SIG_EXIT);
 	}
-	CurrentState = NewState;
-	CurrentState(SIG_ENTRY);
+	current_state_ = new_state;
+	current_state_(SIG_ENTRY);
 }
 
-void StateMachine::Standby_state(Signal s) {
+void StateMachine::StandbyState(Signal s) {
 	switch (s) {
 
 	case SIG_ENTRY:
@@ -104,38 +104,39 @@ void StateMachine::Standby_state(Signal s) {
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
-		transition(ButtonDown_state);
+		Transition(ButtonDownState);
 		break;
 	}
 }
-void StateMachine::BattCheck_state(Signal s) {
+void StateMachine::BattCheckState(Signal s) {
 	switch (s) {
 	case SIG_ENTRY:
-		AlarmClock.AlarmB.deactivate();
-		display.Print("bc");
-		display.Enable();
-		AlarmClock.AlarmA.set(0, 0, 1, 0);
+		AlarmClock.alarm_b_.Deactivate();
+		//TODO implement battery checking here
+		display_.Print("bc");
+		display_.Enable();
+		AlarmClock.alarm_a_.Set(0, 0, 1, 0);
 		break;
 	case SIG_ALARM_A:
-		transition(Warming_state);
+		Transition(WarmingState);
 		break;
 	case SIG_ALARM_B:
 
 		break;
 	case SIG_BUTTON_1_DN:
 	case SIG_BUTTON_2_DN:
-		transition(ButtonDown_state);
+		Transition(ButtonDownState);
 		break;
 	}
 }
-void StateMachine::ButtonDown_state(Signal s) {
+void StateMachine::ButtonDownState(Signal s) {
 	switch (s) {
 	case SIG_ENTRY:
-		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmA.set(0, 0, 2, 0);
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_a_.Set(0, 0, 2, 0);
 		break;
 	case SIG_ALARM_A: //the button is being pushed down for more than a 2 secs
-		transition(TemperatureSet_state);
+		Transition(TemperatureSetState);
 		break;
 	case SIG_ALARM_B:
 
@@ -145,203 +146,201 @@ void StateMachine::ButtonDown_state(Signal s) {
 		break;
 	case SIG_BUTTON_1_UP:
 	case SIG_BUTTON_2_UP: //The button was released before the threshold time
-		transition(BattCheck_state);
+		Transition(BattCheckState);
 		break;
 	case SIG_EXIT:
-		AlarmClock.AlarmA.deactivate();
+		AlarmClock.alarm_a_.Deactivate();
 		break;
 	}
 }
-void StateMachine::Warming_state(Signal s) {
+void StateMachine::WarmingState(Signal s) {
 	switch (s) {
 	int16_t measurement;
 case SIG_ENTRY:
-	display.Enable();
-	AlarmClock.AlarmB.set(0, CYCLE_TIMEOUT, 0, 0);
-	measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-	display.Print(measurement);
-	if (measurement > Setpoint.Read() + 3) {
-		transition(Cooling_state);
+	display_.Enable();
+	AlarmClock.alarm_b_.Set(0, CYCLE_TIMEOUT, 0, 0);
+	measurement = (thermometer_.Measure() - 1228) * 100 / (1544 - 1228);
+	display_.Print(measurement);
+	if (measurement > setpoint_.Read() + 3) {
+		Transition(CoolingState);
 	} else {
-		AlarmClock.AlarmA.set(0, 0, 2, 0);
+		AlarmClock.alarm_a_.Set(0, 0, 2, 0);
 	}
 	break;
 case SIG_ALARM_A:
-	measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-	display.Print(measurement);
-	if (measurement > Setpoint.Read() + 3) {
-		transition(Cooling_state);
+	measurement = (thermometer_.Measure() - 1228) * 100 / (1544 - 1228);
+	display_.Print(measurement);
+	if (measurement > setpoint_.Read() + 3) {
+		Transition(CoolingState);
 	} else {
-		AlarmClock.AlarmA.set(0, 0, 2, 0);
+		AlarmClock.alarm_a_.Set(0, 0, 2, 0);
 	}
 	break;
 case SIG_ALARM_B:
-	transition(Standby_state);
+	Transition(StandbyState);
 	break;
 case SIG_BUTTON_1_DN:
 case SIG_BUTTON_2_DN:
-	transition(ButtonDown_state);
+	Transition(ButtonDownState);
 	break;
 case SIG_BUTTON_2_UP:
 case SIG_BUTTON_1_UP:
 	break;
 	}
 }
-void StateMachine::Cooling_state(Signal s) {
+void StateMachine::CoolingState(Signal s) {
 	switch (s) {
 	uint16_t measurement;
 case SIG_ENTRY:
-	measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-	display.Print(measurement);
-	if (measurement < Setpoint.Read()) {
-		transition(Alarm_state);
+	measurement = (thermometer_.Measure() - 1228) * 100 / (1544 - 1228);
+	display_.Print(measurement);
+	if (measurement < setpoint_.Read()) {
+		Transition(AlarmState);
 	} else {
-		AlarmClock.AlarmA.set(0, 0, 2, 0);
+		AlarmClock.alarm_a_.Set(0, 0, 2, 0);
 	}
 	break;
 case SIG_ALARM_A:
-	measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-	display.Print(measurement);
-	if (measurement < Setpoint.Read()) {
-		transition(Alarm_state);
+	measurement = (thermometer_.Measure() - 1228) * 100 / (1544 - 1228);
+	display_.Print(measurement);
+	if (measurement < setpoint_.Read()) {
+		Transition(AlarmState);
 	} else {
-		AlarmClock.AlarmA.set(0, 0, 2, 0);
+		AlarmClock.alarm_a_.Set(0, 0, 2, 0);
 	}
 	break;
 case SIG_ALARM_B:
-	transition(Standby_state);
+	Transition(StandbyState);
 	break;
 case SIG_BUTTON_1_DN:
 case SIG_BUTTON_2_DN:
-	transition(ButtonDown_state);
+	Transition(ButtonDownState);
 	break;
 case SIG_BUTTON_2_UP:
 case SIG_BUTTON_1_UP:
 	break;
 	}
 }
-void StateMachine::Alarm_state(Signal s) {
-	static int LoopCount;
-	static int TuneIndex;
-	static bool TuneRunning;
-	static bool DisplayOn;
+void StateMachine::AlarmState(Signal s) {
+	static int loop_count;
+	static int tune_index;
+	static bool tune_running;
+	static bool display_on;
 	uint16_t measurement;
 	switch (s) {
 	case SIG_ENTRY:
-		LoopCount = 0;
-		TuneIndex = 0;
-		TuneRunning = false;
-		AlarmClock.AlarmB.deactivate();
-		AlarmClock.AlarmA.deactivate();
-//		AlarmClock.AlarmA.set(0,0,0,10);
-//		break;
-		AlarmClock.AlarmB.set(0, 0, 0, TIMEBASE * 4);
-		display.Print(Setpoint.Read());
-		DisplayOn = true;
-		measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-		display.Print(measurement);
-		display.Enable();
+		loop_count = 0;
+		tune_index = 0;
+		tune_running = false;
+		AlarmClock.alarm_b_.Deactivate();
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_b_.Set(0, 0, 0, TIMEBASE * 4);
+		display_.Print(setpoint_.Read());
+		display_on = true;
+		measurement = (thermometer_.Measure() - 1228) * 100 / (1544 - 1228);
+		display_.Print(measurement);
+		display_.Enable();
 	case SIG_ALARM_A:
-		if (TuneIndex >= 20) {
-			if (LoopCount >= 3) {
-				transition(Standby_state);
+		if (tune_index >= 20) {
+			if (loop_count >= 3) {
+				Transition(StandbyState);
 				return;
 			} else {
-				++LoopCount;
-				TuneIndex = 0;
+				++loop_count;
+				tune_index = 0;
 			}
 
 		}
 
-		if (!TuneRunning) {
-			AlarmClock.AlarmA.set(0, 0, BasicTune[TuneIndex].onSeconds,
-					BasicTune[TuneIndex].onSubseconds);
-			buzzer.setFrequency(BasicTune[TuneIndex].frequecy);
-			buzzer.start();
-			TuneRunning = true;
+		if (!tune_running) {
+			AlarmClock.alarm_a_.Set(0, 0, BasicTune[tune_index].on_seconds,
+					BasicTune[tune_index].on_sub_seconds);
+			buzzer_.SetFrequency(BasicTune[tune_index].frequecy);
+			buzzer_.Start();
+			tune_running = true;
 		} else {
-			AlarmClock.AlarmA.set(0, 0, BasicTune[TuneIndex].offSeconds,
-					BasicTune[TuneIndex].offSubseconds);
-			buzzer.stop();
-			TuneRunning = false;
-			TuneIndex++;
+			AlarmClock.alarm_a_.Set(0, 0, BasicTune[tune_index].off_seconds,
+					BasicTune[tune_index].off_sub_seconds);
+			buzzer_.Stop();
+			tune_running = false;
+			tune_index++;
 		}
 		break;
 	case SIG_ALARM_B:
-		if (DisplayOn) {
-			display.Disable();
-			DisplayOn = false;
+		if (display_on) {
+			display_.Disable();
+			display_on = false;
 		} else {
-			measurement = (thermometer.measure() - 1228) * 100 / (1544 - 1228);
-			display.Print(measurement);
-			display.Enable();
-			DisplayOn = true;
+			measurement = (thermometer_.Measure() - 1228) * 100 / (1544 - 1228);
+			display_.Print(measurement);
+			display_.Enable();
+			display_on = true;
 		}
-		AlarmClock.AlarmB.set(0, 0, 0, TIMEBASE * 4);
+		AlarmClock.alarm_b_.Set(0, 0, 0, TIMEBASE * 4);
 		break;
 	case SIG_BUTTON_1_UP:
 	case SIG_BUTTON_2_UP:
-		transition(Standby_state);
+		Transition(StandbyState);
 		break;
 	case SIG_EXIT:
-		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmB.deactivate();
-		buzzer.stop();
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_b_.Deactivate();
+		buzzer_.Stop();
 		break;
 	}
 }
-void StateMachine::TemperatureSet_state(Signal s) {
-	static bool DisplayOn = true;
+void StateMachine::TemperatureSetState(Signal s) {
+	static bool display_on = true;
 	switch (s) {
 	case SIG_ENTRY:
-		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmB.deactivate();
-		AlarmClock.AlarmB.set(0, 0, 5, 0);
-		AlarmClock.AlarmA.set(0, 0, 0, 128);
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_b_.Deactivate();
+		AlarmClock.alarm_b_.Set(0, 0, 5, 0);
+		AlarmClock.alarm_a_.Set(0, 0, 0, 128);
 
-		display.Print(Setpoint.Read());
-		DisplayOn = true;
-		display.Enable();
+		display_.Print(setpoint_.Read());
+		display_on = true;
+		display_.Enable();
 		break;
 	case SIG_ALARM_A:
-		if (DisplayOn) {
-			display.Disable();
-			DisplayOn = false;
+		if (display_on) {
+			display_.Disable();
+			display_on = false;
 		} else {
-			display.Enable();
-			DisplayOn = true;
+			display_.Enable();
+			display_on = true;
 		}
-		AlarmClock.AlarmA.set(0, 0, 0, 128);
+		AlarmClock.alarm_a_.Set(0, 0, 0, 128);
 		break;
 	case SIG_ALARM_B:
-		transition(BattCheck_state);
+		Transition(BattCheckState);
 		break;
 	case SIG_BUTTON_1_UP:
-		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmB.deactivate();
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_b_.Deactivate();
 
-		Setpoint.Write(Setpoint.Read() + 1);
-		display.Print(Setpoint.Read());
-		DisplayOn = true;
-		display.Enable();
-		AlarmClock.AlarmA.set(0, 0, 0, 128);
-		AlarmClock.AlarmB.set(0, 0, 5, 0);
+		setpoint_.Write(setpoint_.Read() + 1);
+		display_.Print(setpoint_.Read());
+		display_on = true;
+		display_.Enable();
+		AlarmClock.alarm_a_.Set(0, 0, 0, 128);
+		AlarmClock.alarm_b_.Set(0, 0, 5, 0);
 		break;
 	case SIG_BUTTON_2_UP:
-		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmB.deactivate();
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_b_.Deactivate();
 
-		Setpoint.Write(Setpoint.Read() - 1);
-		display.Print(Setpoint.Read());
-		DisplayOn = true;
-		display.Enable();
-		AlarmClock.AlarmA.set(0, 0, 0, 128);
+		setpoint_.Write(setpoint_.Read() - 1);
+		display_.Print(setpoint_.Read());
+		display_on = true;
+		display_.Enable();
+		AlarmClock.alarm_a_.Set(0, 0, 0, 128);
 
-		AlarmClock.AlarmB.set(0, 0, 5, 0);
+		AlarmClock.alarm_b_.Set(0, 0, 5, 0);
 		break;
 	case SIG_EXIT:
-		AlarmClock.AlarmA.deactivate();
-		AlarmClock.AlarmB.deactivate();
+		AlarmClock.alarm_a_.Deactivate();
+		AlarmClock.alarm_b_.Deactivate();
 		break;
 	}
 }

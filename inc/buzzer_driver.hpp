@@ -12,13 +12,13 @@
 
 class Buzzer {
 	public:
-	TIM_HandleTypeDef htim2;
-	TIM_OC_InitTypeDef sConfigOC;
-	bool isRunning;
+	TIM_HandleTypeDef htim_2_;
+	TIM_OC_InitTypeDef config_oc_;
+	bool is_running_;
 	void Init();
-	void start();
-	void setFrequency(uint16_t setFreq);
-	void stop();
+	void Start();
+	void SetFrequency(uint16_t set_freq);
+	void Stop();
 };
 
 #endif  // INC_BUZZER_DRIVER_HPP_

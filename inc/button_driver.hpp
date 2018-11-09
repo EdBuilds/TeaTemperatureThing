@@ -15,11 +15,11 @@ typedef enum {
 } ButtonID;
 class Button {
 	public:
-	static SignalCallback ButtonCallback;
-	void Init(SignalCallback buttonCallback);
+	static SignalCallback button_callback_;
+	void Init(SignalCallback button_callback);
 	GPIO_PinState Read(ButtonID button);
-	static void Disable(IRQn_Type InterruptRoutine);
-	static void Enable(IRQn_Type InterruptRoutine);
+	static void Disable(IRQn_Type interrupt_routine);
+	static void Enable(IRQn_Type interrupt_routine);
 };
 
 #endif  // INC_BUTTON_DRIVER_HPP_

@@ -11,15 +11,15 @@
 
 // This class handles the Output pins, such as LEDs, power toggles, etc..
 class OutputPin {
-	uint16_t Pin;
-	GPIO_TypeDef * Port;
+	uint16_t pin_;
+	GPIO_TypeDef * port_;
 
 	public:
 	OutputPin();
 	OutputPin(uint16_t pin, GPIO_TypeDef * port);
-	void set();
-	void reset();
-	void set(const GPIO_PinState & StateValue);
+	void Set();
+	void Reset();
+	void Set(const GPIO_PinState & state);
 };
 
 #endif  // INC_GPIO_WRAPPER_HPP_

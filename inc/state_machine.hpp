@@ -7,6 +7,7 @@
 
 #ifndef INC_STATE_MACHINE_HPP_
 #define INC_STATE_MACHINE_HPP_
+
 #include <inc/button_driver.hpp>
 #include <inc/buzzer_driver.hpp>
 #include <inc/persistent_storage.hpp>
@@ -16,6 +17,7 @@
 #include "inc/display_driver.hpp"
 #include "inc/signal_definition.hpp"
 #include "etl/include/etl/queue.h"
+
 #define STATE_BTNDN_DELAY 2
 #define CYCLE_TIMEOUT 20
 
@@ -23,30 +25,30 @@ class StateMachine {
 	public:
 	static RealTimeClock AlarmClock;
 
-	void Init(bool WakeupRun);
+	void Init(bool wakeup_run);
 	void Update();
 
 	private:
-	static const EepromItem<HeaderData> Header;
-	static const EepromItem<setpointData> Setpoint;
-	static const EepromItem<calibrationData> CalibrationData;
-	static etl::queue<Signal, 20> SignalContainer;
-	static Thermometer thermometer;
-	static Display display;
-	static Buzzer buzzer;
-	static State CurrentState;
-	static Signal NextSignal;
-	static Button Buttons;
+	static const EepromItem<HeaderData> header_;
+	static const EepromItem<SetpointData> setpoint_;
+	static const EepromItem<CalibrationData> calibration_data_;
+	static etl::queue<Signal, 20> signal_container_;
+	static Thermometer thermometer_;
+	static Display display_;
+	static Buzzer buzzer_;
+	static State current_state_;
+	static Signal next_signal_;
+	static Button buttons_;
 	static void SetNextSignal(Signal s);
 	// State functions
-	static void transition(State NewState);
-	static void Standby_state(Signal s);
-	static void BattCheck_state(Signal s);
-	static void ButtonDown_state(Signal s);
-	static void Warming_state(Signal s);
-	static void Cooling_state(Signal s);
-	static void Alarm_state(Signal s);
-	static void TemperatureSet_state(Signal s);
+	static void Transition(State new_state);
+	static void StandbyState(Signal s);
+	static void BattCheckState(Signal s);
+	static void ButtonDownState(Signal s);
+	static void WarmingState(Signal s);
+	static void CoolingState(Signal s);
+	static void AlarmState(Signal s);
+	static void TemperatureSetState(Signal s);
 };
 
 #endif  // INC_STATE_MACHINE_HPP_

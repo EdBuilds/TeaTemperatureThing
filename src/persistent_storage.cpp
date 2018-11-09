@@ -11,45 +11,44 @@
 
 
 template <class T>
-uint32_t EepromItem<T>::_globalAddress=EEPROM_BASE_ADDRESS;
+uint32_t EepromItem<T>::global_address_=EEPROM_BASE_ADDRESS;
 template <class T>
-EepromItem<T>::EepromItem(): _startAddress(_globalAddress){
-_globalAddress+=size();
+EepromItem<T>::EepromItem(): start_address_(global_address_){
+global_address_+=Size();
 }
 
 template <class T>
-uint32_t EepromItem<T>::size() const{
+uint32_t EepromItem<T>::Size() const{
 	return sizeof(T);
 }
 template <class T>
 T EepromItem<T>::Read() const{
-	T returnvalue=*(T *)_startAddress;
-	return returnvalue;
+	T return_value=*(T *)start_address_;
+	return return_value;
 }
 
 template <class T>
 void EepromItem<T>::Write(const T &value) const{
-	SerializedTemplate EEPROM_serial_container;
+	SerializedTemplate eeprom_serial_container;
 	FLASH->SR=3;
-		EEPROM_serial_container.Deserialized=value;
+		eeprom_serial_container.deserialized=value;
 		if(HAL_FLASHEx_DATAEEPROM_Unlock()!=HAL_OK){//Unprotect the EEPROM to allow writing
 			HAL_FLASHEx_DATAEEPROM_Lock();
-			ErrorFatal(__FILE__, __LINE__);
+			FatalError(__FILE__, __LINE__);
 		}
-		for (uint32_t Byte_index=0;Byte_index<size();Byte_index++){
+		for (uint32_t byte_index=0;byte_index<Size();byte_index++){
 			//Not very c++ way of iterating, but I'm getting dangerously close to low level here
-			HAL_StatusTypeDef status=HAL_FLASHEx_DATAEEPROM_Program(TYPEPROGRAMDATA_BYTE,_startAddress+Byte_index,EEPROM_serial_container.Serialized[Byte_index]);
+			HAL_StatusTypeDef status=HAL_FLASHEx_DATAEEPROM_Program(TYPEPROGRAMDATA_BYTE,start_address_+byte_index,eeprom_serial_container.serialized[byte_index]);
 					if(status!=HAL_OK){//Unprotect the EEPROM to allow writing
 			HAL_FLASHEx_DATAEEPROM_Lock();
-						ErrorFatal(__FILE__, __LINE__);
+						FatalError(__FILE__, __LINE__);
 					}
 		}
 		if(HAL_FLASHEx_DATAEEPROM_Lock()!=HAL_OK){// Reprotect the EEPROM
-			ErrorFatal(__FILE__, __LINE__);
+			FatalError(__FILE__, __LINE__);
 
 		}
 }
-
 
  template class EepromItem<uint8_t>;
  template class EepromItem<uint16_t>;

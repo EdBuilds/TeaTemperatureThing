@@ -12,36 +12,37 @@
 #include "inc/pinout_definitions.hpp"
 
 class Display {
-	static const uint8_t SevenSegmentASCII[96];
-	struct segmentBlock {
-		OutputPin EnablePin;
-		OutputPin Pins[SEGMENT_NUMBER_IN_BLOCK];
-		GPIO_PinState PinSetting[SEGMENT_NUMBER_IN_BLOCK];
-		void set(const uint8_t & segment);
-		void set(const uint8_t & segment, GPIO_PinState state);
-		void reset(const uint8_t & segment);
-		void setAll();
-		void setAsbinary(const uint8_t & binaryList);
-		void resetAll();
-		void on();
-		void off();
-		void update();
-		segmentBlock();
-		segmentBlock(uint16_t * segmentPins, GPIO_TypeDef ** segmentPorts,
-				uint16_t enablePin, GPIO_TypeDef * enablePort);
+	static const uint8_t kSevenSegmentASCII[96];
+	class SegmentBlock {
+		OutputPin enable_pin_;
+		OutputPin pins_[SEGMENT_NUMBER_IN_BLOCK];
+		GPIO_PinState pin_setting_[SEGMENT_NUMBER_IN_BLOCK];
+		public:
+		void Set(const uint8_t & segment);
+		void Set(const uint8_t & segment, GPIO_PinState state);
+		void Reset(const uint8_t & segment);
+		void SetAll();
+		void SetAsBinary(const uint8_t & binary_list);
+		void ResetAll();
+		void On();
+		void Off();
+		void Update();
+		SegmentBlock();
+		SegmentBlock(uint16_t * segment_pins, GPIO_TypeDef ** segment_ports,
+				uint16_t enable_pin, GPIO_TypeDef * enable_port);
 	};
-	static int activeBlock;
-	char buffer[5];
+	static int active_block_;
+
 
 	public:
 	static TIM_HandleTypeDef htim21;
-	static segmentBlock Blocks[CONNECTED_BLOCKS];
+	static SegmentBlock blocks[CONNECTED_BLOCKS];
 	void Init();
 	Display();
 	static void TimerCallback();
 	// I know this is a terrible varable naming, I take any suggestions
-	void Print(char* stringToPrint);
-	void Print(int8_t numberToPrint);
+	void Print(char* string_to_print);
+	void Print(int8_t number_to_print);
 	void Clear();
 	void Enable();
 	void Disable();

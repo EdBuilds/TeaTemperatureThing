@@ -18,15 +18,15 @@
 #include "inc/display_driver.hpp"
 #include "etl/include/etl/queue.h"
 
-void SystemClock_Config(void);
-void SystemPower_Config(void);
+void SystemClockConfig(void);
+void SystemPowerConfig(void);
 RealTimeClock alarm;
 int main(void)
 {
 
 HAL_Init();
-SystemClock_Config();
-SystemPower_Config();
+SystemClockConfig();
+SystemPowerConfig();
 StateMachine machine;
  uint8_t temp=__HAL_PWR_GET_FLAG(PWR_FLAG_WU);
 machine.Init(bool(temp));
@@ -35,13 +35,14 @@ machine.Init(bool(temp));
 machine.Update();
 	}
 }
+
 //Cleanup this code dude
-void SystemClock_Config(void)
+void SystemClockConfig(void)
 {
 
-	  RCC_OscInitTypeDef RCC_OscInitStruct;
-	  RCC_ClkInitTypeDef RCC_ClkInitStruct;
-	  RCC_PeriphCLKInitTypeDef PeriphClkInit;
+	  RCC_OscInitTypeDef rcc_osc_init_struct;
+	  RCC_ClkInitTypeDef rcc_clk_init_struct;
+	  RCC_PeriphCLKInitTypeDef periph_clk_init;
 
 	    /**Configure the main internal regulator output voltage
 	    */
@@ -49,36 +50,36 @@ void SystemClock_Config(void)
 
 	    /**Initializes the CPU, AHB and APB busses clocks
 	    */
-	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
-	  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	  RCC_OscInitStruct.HSICalibrationValue = 16;
-	  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-	  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
-	  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_4;
-	  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+	  rcc_osc_init_struct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+	  rcc_osc_init_struct.HSIState = RCC_HSI_ON;
+	  rcc_osc_init_struct.HSICalibrationValue = 16;
+	  rcc_osc_init_struct.LSIState = RCC_LSI_ON;
+	  rcc_osc_init_struct.PLL.PLLState = RCC_PLL_ON;
+	  rcc_osc_init_struct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+	  rcc_osc_init_struct.PLL.PLLMUL = RCC_PLLMUL_4;
+	  rcc_osc_init_struct.PLL.PLLDIV = RCC_PLLDIV_4;
+	  if (HAL_RCC_OscConfig(&rcc_osc_init_struct) != HAL_OK)
 	  {
 	   // _Error_Handler(__FILE__, __LINE__);
 	  }
 
 	    /**Initializes the CPU, AHB and APB busses clocks
 	    */
-	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+	  rcc_clk_init_struct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
 	                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-	  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+	  rcc_clk_init_struct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	  rcc_clk_init_struct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	  rcc_clk_init_struct.APB1CLKDivider = RCC_HCLK_DIV1;
+	  rcc_clk_init_struct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-	  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+	  if (HAL_RCC_ClockConfig(&rcc_clk_init_struct, FLASH_LATENCY_0) != HAL_OK)
 	  {
 	    //_Error_Handler(__FILE__, __LINE__);
 	  }
 
-	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-	  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+	  periph_clk_init.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+	  periph_clk_init.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+	  if (HAL_RCCEx_PeriphCLKConfig(&periph_clk_init) != HAL_OK)
 	  {
 	    //_Error_Handler(__FILE__, __LINE__);
 	  }
@@ -97,7 +98,7 @@ void SystemClock_Config(void)
 
 }
 
- void SystemPower_Config(void)
+ void SystemPowerConfig(void)
  {
    __HAL_RCC_PWR_CLK_ENABLE();
 	  __HAL_RCC_GPIOA_CLK_ENABLE();

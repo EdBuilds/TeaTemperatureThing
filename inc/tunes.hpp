@@ -10,10 +10,10 @@
 #include <inttypes.h>
 
 typedef struct {
-	uint8_t onSeconds;
-	uint8_t onSubseconds;
-	uint8_t offSeconds;
-	uint8_t offSubseconds;
+	uint8_t on_seconds;
+	uint8_t on_sub_seconds;
+	uint8_t off_seconds;
+	uint8_t off_sub_seconds;
 	uint16_t frequecy;
 } Note;
 #define BPM 130

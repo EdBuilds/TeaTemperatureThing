@@ -8,7 +8,7 @@
 #ifndef INC_ERROR_HANDLER_HPP_
 #define INC_ERROR_HANDLER_HPP_
 
-inline void ErrorFatal(char *file, int line) {
+inline void FatalError(char *file, int line) {
 	while (true) {
 		// The program enters an infinite loop in case of an error
 	}

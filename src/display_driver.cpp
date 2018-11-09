@@ -11,90 +11,91 @@
 #include "stdlib.h"
 #define ASCII_OFFSET 32
 TIM_HandleTypeDef Display::htim21;
-int Display::activeBlock=0;
-Display::segmentBlock Display::Blocks[CONNECTED_BLOCKS];
-void Display::segmentBlock::set(const uint8_t & segment){
+int Display::active_block_=0;
+Display::SegmentBlock Display::blocks[CONNECTED_BLOCKS];
+void Display::SegmentBlock::Set(const uint8_t & segment){
 	//when the pin is set low, the LED turns on, because of the lame common anode 7 segment display
-PinSetting[segment]=GPIO_PIN_RESET;
+pin_setting_[segment]=GPIO_PIN_RESET;
 }
-void Display::segmentBlock::reset(const uint8_t & segment){
+void Display::SegmentBlock::Reset(const uint8_t & segment){
 	//when the pin is set high, the LED turns off, because of the lame common anode 7 segment display
-PinSetting[segment]=GPIO_PIN_SET;
+pin_setting_[segment]=GPIO_PIN_SET;
 
 }
 
 
-void Display::segmentBlock::set(const uint8_t & segment,GPIO_PinState state){
-	Pins[segment].set(state);
+void Display::SegmentBlock::Set(const uint8_t & segment,GPIO_PinState state){
+	pins_[segment].Set(state);
 }
-void Display::segmentBlock::setAll(){
+void Display::SegmentBlock::SetAll(){
 for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
 	//when the pin is set low, the LED turns on, because of the lame common anode 7 segment display
-	PinSetting[i]=GPIO_PIN_RESET;
+	pin_setting_[i]=GPIO_PIN_RESET;
 	}
 }
-void Display::segmentBlock::resetAll(){
+void Display::SegmentBlock::ResetAll(){
 for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
 	//I wont paste this comment for the fourth time
-	PinSetting[i]=GPIO_PIN_SET;
+	pin_setting_[i]=GPIO_PIN_SET;
 	}
 }
 
-void Display::segmentBlock::on(){
-EnablePin.set();
+void Display::SegmentBlock::On(){
+enable_pin_.Set();
 }
-void Display::segmentBlock::off(){
-EnablePin.reset();
+void Display::SegmentBlock::Off(){
+enable_pin_.Reset();
 }
 
-void Display::segmentBlock::update(){
+void Display::SegmentBlock::Update(){
 	for(int i=0;i<SEGMENT_NUMBER_IN_BLOCK; i++){
-		Pins[i].set(PinSetting[i]);
+		pins_[i].Set(pin_setting_[i]);
 	}
 }
-void Display::Print(char* stringToPrint){
+void Display::Print(char* string_to_print){
 	for(int i=0; i<CONNECTED_BLOCKS; i++){
-		Blocks[i].setAsbinary(SevenSegmentASCII[uint8_t(stringToPrint[i])-ASCII_OFFSET]);
+		blocks[i].SetAsBinary(kSevenSegmentASCII[uint8_t(string_to_print[i])-ASCII_OFFSET]);
 		//Blocks[i].update();
 	}
 }
-void Display::Print(int8_t numberToPrint){
-	  itoa(numberToPrint,buffer,10);
+void Display::Print(int8_t number_to_print){
+		char buffer[5];
+	  itoa(number_to_print,buffer,10);
 	  Print(buffer);
 
 }
 void Display::Clear(){
 for(int i=0; i<CONNECTED_BLOCKS; i++){
-	Blocks[i].resetAll();
+	blocks[i].ResetAll();
 	//Blocks[i].update();
 
 }
 }
 void Display::All(){
 for(int i=0; i<CONNECTED_BLOCKS; i++){
-	Blocks[i].setAll();
+	blocks[i].SetAll();
 	//Blocks[i].update();
 
 }
 }
 
-void Display::segmentBlock::setAsbinary(const uint8_t & binaryList){
+void Display::SegmentBlock::SetAsBinary(const uint8_t & binary_list){
 		for( int i=0; i<SEGMENT_NUMBER_IN_BLOCK; i++){
-			if((binaryList >> i) & 1){		//checking each bit of the input
-				set(i);
+			if((binary_list >> i) & 1){		//checking each bit of the input
+				Set(i);
 			}else{
-				reset(i);
+				Reset(i);
 			}
 		}
 	}
-Display::segmentBlock::segmentBlock(){}
+Display::SegmentBlock::SegmentBlock(){}
 
 
-Display::segmentBlock::segmentBlock(uint16_t * segmentPins,GPIO_TypeDef ** segmentPorts, uint16_t enablePin, GPIO_TypeDef * enablePort){
+Display::SegmentBlock::SegmentBlock(uint16_t * segment_pins,GPIO_TypeDef ** segment_ports, uint16_t enable_pin, GPIO_TypeDef * enable_port){
 		for(int i=0 ; i<SEGMENT_NUMBER_IN_BLOCK;i++){
-			Pins[i]=OutputPin(segmentPins[i],segmentPorts[i]);
+			pins_[i]=OutputPin(segment_pins[i],segment_ports[i]);
 		}
-EnablePin=OutputPin(enablePin,enablePort);
+enable_pin_=OutputPin(enable_pin,enable_port);
 	}
 Display::Display(){
 uint16_t Block1Pins[]={BLOCK_1_PIN_A,
@@ -113,15 +114,15 @@ GPIO_TypeDef* Block1Ports[]={BLOCK_1_PORT_A,
 		 BLOCK_1_PORT_F,
 		 BLOCK_1_PORT_G,
 		 BLOCK_1_PORT_SP};
-	Blocks[0]=segmentBlock(Block1Pins,Block1Ports,BLOCK_1_ENABLE_PIN, BLOCK_1_ENABLE_PORT);
-	Blocks[1]=segmentBlock(Block1Pins,Block1Ports,BLOCK_2_ENABLE_PIN, BLOCK_2_ENABLE_PORT);
+	blocks[0]=SegmentBlock(Block1Pins,Block1Ports,BLOCK_1_ENABLE_PIN, BLOCK_1_ENABLE_PORT);
+	blocks[1]=SegmentBlock(Block1Pins,Block1Ports,BLOCK_2_ENABLE_PIN, BLOCK_2_ENABLE_PORT);
 }
 
 void Display::Init(){
     __HAL_RCC_TIM21_CLK_ENABLE();
 
-  TIM_ClockConfigTypeDef sClockSourceConfig;
-  TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_ClockConfigTypeDef clock_source_config;
+  TIM_MasterConfigTypeDef master_config;
   htim21=TIM_HandleTypeDef();
   htim21.Instance = TIM21;
   htim21.Init.Prescaler = 16-1;
@@ -133,15 +134,15 @@ void Display::Init(){
     //_Error_Handler(__FILE__, __LINE__);
   }
 
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim21, &sClockSourceConfig) != HAL_OK)
+  clock_source_config.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim21, &clock_source_config) != HAL_OK)
   {
     //_Error_Handler(__FILE__, __LINE__);
   }
 
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim21, &sMasterConfig) != HAL_OK)
+  master_config.MasterOutputTrigger = TIM_TRGO_RESET;
+  master_config.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim21, &master_config) != HAL_OK)
   {
     //_Error_Handler(__FILE__, __LINE__);
   }
@@ -154,7 +155,7 @@ void Display::Init(){
 
 
 void Display::Enable(){
-	Blocks[activeBlock].on();
+	blocks[active_block_].On();
 if (HAL_TIM_Base_Start_IT(&htim21) != HAL_OK)
 {
     //_Error_Handler(__FILE__, __LINE__);
@@ -165,15 +166,15 @@ if (HAL_TIM_Base_Stop_IT(&htim21) != HAL_OK)
 {
     //_Error_Handler(__FILE__, __LINE__);
 }
-Blocks[activeBlock].off();
+blocks[active_block_].Off();
 }
 
 
 void Display::TimerCallback(){
-	Blocks[activeBlock].off();
-	activeBlock=(++activeBlock)%CONNECTED_BLOCKS;
-	Blocks[activeBlock].update();
-	Blocks[activeBlock].on();
+	blocks[active_block_].Off();
+	active_block_=(++active_block_)%CONNECTED_BLOCKS;
+	blocks[active_block_].Update();
+	blocks[active_block_].On();
 }
 
 void TIM21_IRQHandler(void)
@@ -196,7 +197,7 @@ void TIM21_IRQHandler(void)
 //Defining ASCII to 7 segments here, not to clutter the .h
 //all credits to dmadison.
 //nothing interesting after this point move along citizen.
-const uint8_t Display::SevenSegmentASCII[96] = {
+const uint8_t Display::kSevenSegmentASCII[96] = {
 	0b00000000, /* (space) */
 	0b10000110, /* ! */
 	0b00100010, /* " */

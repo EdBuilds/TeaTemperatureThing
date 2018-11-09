@@ -10,13 +10,14 @@
 #include <inc/gpio_wrapper.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "inc/pinout_definitions.hpp"
+
 class Thermometer {
-	OutputPin ReferenceEnable;
-	ADC_HandleTypeDef AdcHandle;
-	ADC_ChannelConfTypeDef AdcChannel;
+	OutputPin reference_enable_;
+	ADC_HandleTypeDef adc_handle_;
+	ADC_ChannelConfTypeDef adc_channel_;
 
 	public:
-	uint16_t measure();
+	uint16_t Measure();
 	Thermometer();
 };
 
