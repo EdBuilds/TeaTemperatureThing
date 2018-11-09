@@ -8,10 +8,10 @@
 #include <error_handler.hpp>
 #include <thermometer_driver.hpp>
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
-//#include "stm32l0xx.h"
-//#include "stm32l0xx_hal_tim.h"
-//#include "stm32l0xx_hal_gpio.h"
-//#include "stm32l0xx_nucleo_32.h"
+
+/**
+ * Initializes the hardware layer of the ADC
+ */
 Thermometer::Thermometer(): reference_enable_(THERMOMETER_REFERENCE_PIN,THERMOMETER_REFERENCE_PORT){
 	    __HAL_RCC_ADC1_CLK_ENABLE();
 		GPIO_InitTypeDef gpio_init;
@@ -47,6 +47,11 @@ Thermometer::Thermometer(): reference_enable_(THERMOMETER_REFERENCE_PIN,THERMOME
 	    //Initialize reference pin
 	   //ReferenceEnable.reset();
 	}
+
+/**
+ * @brief Measures the voltage on the ADC1 pin
+ * @return The result of the ADC conversion
+ */
 uint16_t Thermometer::Measure(){
 	uint16_t return_value=0;
     //ReferenceEnable.set();
@@ -60,6 +65,3 @@ uint16_t Thermometer::Measure(){
     //ReferenceEnable.reset();
 return return_value;
 }
-
-
-

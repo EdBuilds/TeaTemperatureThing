@@ -19,8 +19,12 @@ Thermometer StateMachine::thermometer_;
 Buzzer StateMachine::buzzer_;
 Display StateMachine::display_;
 const EepromItem<SetpointData> StateMachine::setpoint_;
-
 etl::queue<Signal, 20> StateMachine::signal_container_;
+
+/**
+ * @brief initializes the state machine
+ * @param wakeup_run true if the MCU was in standby mode
+ */
 void StateMachine::Init(bool wakeup_run) {
 	current_state_ = &StandbyState;
 	AlarmClock.Init(&SetNextSignal);
@@ -45,6 +49,9 @@ void StateMachine::Init(bool wakeup_run) {
 
 }
 
+/**
+ * @brief processes the incoming signals, if there is any
+ */
 void StateMachine::Update() {
 	if (signal_container_.empty()) {
 		//there is nothing to do currently, entering stop mode
@@ -60,7 +67,8 @@ void StateMachine::Update() {
 	if (next_signal == SIG_BUTTON_1_UP || next_signal == SIG_BUTTON_1_DN) {
 		HAL_Delay(5);
 		buttons_.Enable(BUTTON_1_ITn);
-	} else if (next_signal == SIG_BUTTON_2_UP || next_signal == SIG_BUTTON_2_DN) {
+	} else if (next_signal == SIG_BUTTON_2_UP
+			|| next_signal == SIG_BUTTON_2_DN) {
 		HAL_Delay(5);
 		buttons_.Enable(BUTTON_2_ITn);
 	}
@@ -71,10 +79,19 @@ void StateMachine::Update() {
 	current_state_(next_signal);
 	signal_container_.pop();
 }
+
+/**
+ * @brief stores the signal s to be processed later
+ * @param s the signal to process
+ */
 void StateMachine::SetNextSignal(Signal s) {
 	signal_container_.push(s);
 }
 
+/**
+ * @brief handles the state transitions
+ * @param new_state the state to set in the state machine
+ */
 void StateMachine::Transition(State new_state) {
 	if (current_state_ != NULL) {
 		current_state_(SIG_EXIT);
@@ -83,6 +100,10 @@ void StateMachine::Transition(State new_state) {
 	current_state_(SIG_ENTRY);
 }
 
+/**
+ * @brief Handles the state where the system turns off
+ * @param s the signal to pass to the state
+ */
 void StateMachine::StandbyState(Signal s) {
 	switch (s) {
 
@@ -108,6 +129,12 @@ void StateMachine::StandbyState(Signal s) {
 		break;
 	}
 }
+
+/**
+ * @brief Handles the state where the battery needs to be checked
+ * after standby
+ * @param s the signal to pass to the state
+ */
 void StateMachine::BattCheckState(Signal s) {
 	switch (s) {
 	case SIG_ENTRY:
@@ -129,6 +156,11 @@ void StateMachine::BattCheckState(Signal s) {
 		break;
 	}
 }
+
+/**
+ * @brief Handles the state where a button is being pressed down
+ * @param s the signal to pass to the state
+ */
 void StateMachine::ButtonDownState(Signal s) {
 	switch (s) {
 	case SIG_ENTRY:
@@ -153,6 +185,12 @@ void StateMachine::ButtonDownState(Signal s) {
 		break;
 	}
 }
+/**
+ * @brief Handles the state where the mesurement has started, but the temperature hasn't
+ * reached the threshold temp.
+ * @param s the signal to pass to the state
+ */
+
 void StateMachine::WarmingState(Signal s) {
 	switch (s) {
 	int16_t measurement;
@@ -188,6 +226,12 @@ case SIG_BUTTON_1_UP:
 	break;
 	}
 }
+
+/**
+ * @brief Handles the state where the temperature rose above the set temperature and
+ * now it is cooling
+ * @param s the signal to pass to the state
+ */
 void StateMachine::CoolingState(Signal s) {
 	switch (s) {
 	uint16_t measurement;
@@ -221,6 +265,12 @@ case SIG_BUTTON_1_UP:
 	break;
 	}
 }
+
+/**
+ * @brief Handles the state where the temperature fell below the threshold
+ * and the alarm is set off
+ * @param s the signal to pass to the state
+ */
 void StateMachine::AlarmState(Signal s) {
 	static int loop_count;
 	static int tune_index;
@@ -289,6 +339,11 @@ void StateMachine::AlarmState(Signal s) {
 		break;
 	}
 }
+
+/**
+ * @brief Handles the state where the threshold temperature can be set
+ * @param s the signal to pass to the state
+ */
 void StateMachine::TemperatureSetState(Signal s) {
 	static bool display_on = true;
 	switch (s) {

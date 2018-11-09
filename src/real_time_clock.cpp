@@ -9,11 +9,16 @@
 #include <real_time_clock.hpp>
 #include "inc/stm32l0xx_it.h"
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
-//#include "stm32l0xx_hal_rtc.h"
 #include "inc/display_driver.hpp"
+
 RTC_HandleTypeDef RealTimeClock::hrtc_=RTC_HandleTypeDef();
 Alarm RealTimeClock::alarm_a_;
 Alarm RealTimeClock::alarm_b_;
+
+/**
+ * @brief Initializes the hardware layer of the real time clock
+ * @param alarm_callback the callback function to the state machine to pass the signals of the alarms
+ */
 void RealTimeClock::Init(SignalCallback alarm_callback){
 	FLASH->SR;
 	RTC_AlarmTypeDef s_alarm;
@@ -71,7 +76,13 @@ void RealTimeClock::Init(SignalCallback alarm_callback){
 
 }
 //Define the interrupt function here, because I want to include every aspect of the RTC in this source code
-
+/**
+ * @brief Sets the alarm to set off at a given time
+ * @param hours hours to wait
+ * @param minutes minutes to wait
+ * @param seconds seconds to wait
+ * @param sub_seconds sub seconds to wait 255 subsec=1 sec
+ */
 void Alarm::Set(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t sub_seconds){
 	RTC_TimeTypeDef current_time;
 	RTC_DateTypeDef s_date;
@@ -103,18 +114,33 @@ void Alarm::Set(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t sub_se
 	    	FatalError(__FILE__, __LINE__);
 	}
 }
+/**
+ * @brief Turn off the alarm
+ */
 void Alarm::Deactivate(){
 	HAL_RTC_DeactivateAlarm(&RealTimeClock::hrtc_,rtc_alarm_.Alarm);
 }
 
+/**
+ * @brief Interrupt handler for the alarms
+ */
 void RTC_IRQHandler(void)
 {
   HAL_RTC_AlarmIRQHandler(&RealTimeClock::hrtc_);
 
 }
+/**
+ * @brief Interrupt callback for alarm A, passes a signal to the state machine
+ * @param hrtc real time clock handler
+ */
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
 	RealTimeClock::alarm_a_.alarm_callback_(SIG_ALARM_A);
 }
+
+/**
+ * @brief Interrupt callback for alarm B, passes a signal to the state machine
+ * @param hrtc real time clock handler
+ */
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc){
 	RealTimeClock::alarm_b_.alarm_callback_(SIG_ALARM_B);
 }

@@ -12,21 +12,36 @@
 
 template <class T>
 uint32_t EepromItem<T>::global_address_=EEPROM_BASE_ADDRESS;
+
 template <class T>
 EepromItem<T>::EepromItem(): start_address_(global_address_){
-global_address_+=Size();
+	//allocating the memory with incrementing the global address variable
+	global_address_+=Size();
 }
 
+/**
+ * @brief A wrapper for the sizeof function
+ * @return the size of the stored variable
+ */
 template <class T>
 uint32_t EepromItem<T>::Size() const{
 	return sizeof(T);
 }
+
+/**
+ * @brief Reads the stored variable from the eeprom
+ * @return the read variable
+ */
 template <class T>
 T EepromItem<T>::Read() const{
 	T return_value=*(T *)start_address_;
 	return return_value;
 }
 
+/**
+ * @brief Writes the function parameter to the eeprom
+ * @param value the variable to write
+ */
 template <class T>
 void EepromItem<T>::Write(const T &value) const{
 	SerializedTemplate eeprom_serial_container;

@@ -7,6 +7,12 @@
 #include <gpio_wrapper.hpp>
 OutputPin::OutputPin() {
 }
+
+/**
+ * Sets up the hardware layer for the output pin
+ * @param pin the GPIO pin to use
+ * @param port the GPIO ports to use
+ */
 OutputPin::OutputPin(uint16_t pin, GPIO_TypeDef * port) {
 	port_ = port;
 	pin_ = pin;

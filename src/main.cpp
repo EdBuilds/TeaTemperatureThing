@@ -36,7 +36,9 @@ machine.Update();
 	}
 }
 
-//Cleanup this code dude
+/**
+ * @brief Sets the oscillator for the Microcontroller
+ */
 void SystemClockConfig(void)
 {
 
@@ -98,6 +100,9 @@ void SystemClockConfig(void)
 
 }
 
+/**
+ * @brief Configures the low power modes of the Microcontroller
+ */
  void SystemPowerConfig(void)
  {
    __HAL_RCC_PWR_CLK_ENABLE();
@@ -110,5 +115,4 @@ void SystemClockConfig(void)
 	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1);
 	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN2);
 	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN3);
-
  }
