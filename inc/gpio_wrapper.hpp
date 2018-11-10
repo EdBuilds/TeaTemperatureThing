@@ -9,7 +9,9 @@
 #define INC_GPIO_WRAPPER_HPP_
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 
-// This class handles the Output pins, such as LEDs, power toggles, etc..
+/**
+ * @brief  This class handles the Output pins, such as LEDs, power toggles, etc..
+ */
 class OutputPin {
 	uint16_t pin_;
 	GPIO_TypeDef * port_;

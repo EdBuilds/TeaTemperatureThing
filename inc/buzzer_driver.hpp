@@ -9,7 +9,9 @@
 #define INC_BUZZER_DRIVER_HPP_
 #include "inc/pinout_definitions.hpp"
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
-
+/**
+ * @brief Handles the PWM output generation for the buzzer
+ */
 class Buzzer {
 	public:
 	TIM_HandleTypeDef htim_2_;

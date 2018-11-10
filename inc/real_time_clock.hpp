@@ -18,6 +18,9 @@ void RTC_IRQHandler(void);
 }
 #endif
 
+/**
+ * @brief Handles the two real time clock alarms of the hardware
+ */
 class Alarm {
 	RTC_AlarmTypeDef rtc_alarm_;
 
@@ -31,6 +34,9 @@ class Alarm {
 			uint16_t sub_seconds);
 };
 
+/**
+ * @brief sets up the base for the real time clock alarms
+ */
 class RealTimeClock {
 	public:
 	static RTC_HandleTypeDef hrtc_;

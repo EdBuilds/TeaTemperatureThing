@@ -21,6 +21,9 @@
 #define STATE_BTNDN_DELAY 2
 #define CYCLE_TIMEOUT 20
 
+/**
+ * @brief this class executes all the behaviour and logic of the device and keeps track of the current state
+ */
 class StateMachine {
 	public:
 	static RealTimeClock AlarmClock;

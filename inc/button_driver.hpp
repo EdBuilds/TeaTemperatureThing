@@ -13,6 +13,11 @@
 typedef enum {
 	BUTTON_1, BUTTON_2
 } ButtonID;
+
+/**
+ * @brief handles the interaction of the buttons based on rising/falling edge interrupt  on
+ * input pins
+ */
 class Button {
 	public:
 	static SignalCallback button_callback_;

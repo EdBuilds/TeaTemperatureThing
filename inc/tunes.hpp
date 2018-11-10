@@ -9,13 +9,7 @@
 #define INC_TUNES_HPP_
 #include <inttypes.h>
 
-typedef struct {
-	uint8_t on_seconds;
-	uint8_t on_sub_seconds;
-	uint8_t off_seconds;
-	uint8_t off_sub_seconds;
-	uint16_t frequecy;
-} Note;
+// Macros for the tune definition
 #define BPM 130
 #define TIMEBASE 60*256/BPM/4
 #define NOTE_E5 659
@@ -139,6 +133,16 @@ typedef struct {
 #define NOTE_A9	14080
 #define NOTE_A_9	14917
 #define NOTE_B9	15804
+/**
+ * @brief defines unit of one note including the pause after it
+ */
+typedef struct {
+	uint8_t on_seconds;
+	uint8_t on_sub_seconds;
+	uint8_t off_seconds;
+	uint8_t off_sub_seconds;
+	uint16_t frequecy;
+} Note;
 
 static const Note BasicTune[20] = {
 		{ 0, TIMEBASE * 1, 0, TIMEBASE * 3, NOTE_B4 }, { 0, TIMEBASE * 1, 0,

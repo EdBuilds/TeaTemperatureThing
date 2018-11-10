@@ -10,15 +10,18 @@
 #define INC_PERSISTENT_STORAGE_HPP_
 #include <inttypes.h>
 
-#define EEPROM_BASE_ADDRESS 0x08080010
+#define EEPROM_BASE_ADDRESS 0x08080010 // Memory address where the EEPROM field starts
 
+// Typedefs for the eeprom storage
 typedef uint8_t HeaderData;
 typedef struct	__attribute__((packed)) {
 	uint16_t offset;
 	uint16_t multiplier;
 } CalibrationData;
 typedef uint8_t SetpointData;
-
+/*
+ * @brief Manages the read and write functions to the eeprom
+ */
 template<class T>
 class EepromItem {
 	typedef union {

@@ -6,7 +6,9 @@
  */
 #ifndef INC_ETL_PROFILE_H_
 #define INC_ETL_PROFILE_H_
-
+/**
+ * @brief A necessary configuring header for the ETL library
+ */
 #define ETL_VERBOSE_ERRORS
 
 #ifdef _MSC_VER

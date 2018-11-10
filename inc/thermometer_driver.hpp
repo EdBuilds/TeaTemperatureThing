@@ -11,6 +11,9 @@
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "inc/pinout_definitions.hpp"
 
+/**
+ * @brief Wraps the ADC conversion of the thermometer in a class form
+ */
 class Thermometer {
 	OutputPin reference_enable_;
 	ADC_HandleTypeDef adc_handle_;

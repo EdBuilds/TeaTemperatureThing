@@ -11,8 +11,14 @@
 #include "HAL_Driver/Inc/stm32l0xx_hal.h"
 #include "inc/pinout_definitions.hpp"
 
+/**
+ * @brief Handles 7 segment display multiplexing to reduce current consumption
+ */
 class Display {
 	static const uint8_t kSevenSegmentASCII[96];
+	/**
+	 * @brief Driver class of a single 7 segment display block
+	 */
 	class SegmentBlock {
 		OutputPin enable_pin_;
 		OutputPin pins_[SEGMENT_NUMBER_IN_BLOCK];

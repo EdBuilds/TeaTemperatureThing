@@ -11,9 +11,14 @@
 #define INC_SIGNAL_DEFINITION_HPP_
 #include <inttypes.h>
 
+// Typedefs for the callback functions of the hardware interrupt layer
 typedef uint8_t Signal;
 typedef void (*SignalCallback)(Signal);
 typedef void (*State)(Signal);
+
+/**
+ * @brief Defines the signals that can be passed to the state machine to process
+ */
 enum {
 	SIG_NONE,
 	SIG_ALARM_A,
